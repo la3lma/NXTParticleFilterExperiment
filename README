@@ -1,0 +1,32 @@
+This is an experiment in creating a particle filter based navigation
+system for the LEGO NXT robotic system.
+
+The system is written in Java using the lejos <<ref missing>> 
+alternative runtime system for the NXT bricks.
+
+IMPORTANT:  This code doesn't actually work.  I've just typed
+it in and compiled it.  It's neither complete nor correct. It's
+a work in progress :-)
+
+I'm working on the correctness now, and the first step is
+a review (I'm doing that now), but I would really like to
+get some unit tests up and running. Unfortunately Lejos and
+Junit  don't play nice out of the box so I have some thinking
+to do before that can be done.   Then I need to calibrate
+the sensors so the probability distributions used
+in the filter will use somewhat correct prior 
+probabilities, and finally I'll have to run the robot on
+some track and see what it does.
+
+It would be nice if the robot could use bluetooth to
+transmit its belief-state to the mothership (my
+laptop) for realtime visualization, but that's a feature
+rather a long way down in my priority list, though not
+at the bottom.
+
+If you have an interest in this project or even better,
+have something to contribute (review, ideas, assistance
+on how to get JUnit to work with lejos) pleas contact me
+at la3lma at gmail dot com.
+
+l
