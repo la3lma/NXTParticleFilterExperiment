@@ -8,25 +8,38 @@ IMPORTANT:  This code doesn't actually work.  I've just typed
 it in and compiled it.  It's neither complete nor correct. It's
 a work in progress :-)
 
-I'm working on the correctness now, and the first step is
-a review (I'm doing that now), but I would really like to
-get some unit tests up and running. Unfortunately Lejos and
-Junit  don't play nice out of the box so I have some thinking
-to do before that can be done.   Then I need to calibrate
-the sensors so the probability distributions used
-in the filter will use somewhat correct prior 
-probabilities, and finally I'll have to run the robot on
-some track and see what it does.
+I'm working on the correctness now, and the next
+step is to apply thorough unit testing.  
 
-It would be nice if the robot could use bluetooth to
+Unfortunately Lejos and Junit  don't play nice out of the box
+I had to create a second project, an ordinary
+java project in netbeans, that uses the lejos-project's
+build directory as a library.  Then I can just write tests
+and they will access the lejos classes, but run them using
+the standard (not lejos) runtime.   This is perfectly ok
+as long as I don't actually access lejos specific parts
+of the code (e.g. actual sensor or actuators) during
+the testing.   This is perfectly ok by me, since most of
+the code that can fail don't do that kind of thing anyway.
+
+Anyhow, I now have some work to do. I have to add
+a test-harness for the so-far free-wheeling project
+I've written. This will no doubt uncover many kinds
+of bugs and design-blunders. I'm looking forward to it :-)
+
+Consequently it will still be a while before any of this
+runs on an actual robot.
+
+However, when that glorious day comes it i would be 
+nice if the robot could use bluetooth to
 transmit its belief-state to the mothership (my
-laptop) for realtime visualization, but that's a feature
-rather a long way down in my priority list, though not
-at the bottom.
+laptop) for realtime visualization. It would also be nice
+to incoroporate one or several ultrasonic sensors
+to the sensing setup. It's all just a smop :)
 
 If you have an interest in this project or even better,
-have something to contribute (review, ideas, assistance
-on how to get JUnit to work with lejos) pleas contact me
-at la3lma at gmail dot com.
+have something to contribute (review, ideas, assistance)
+please contact me at la3lma@gmail.com.
 
-l
+
+
