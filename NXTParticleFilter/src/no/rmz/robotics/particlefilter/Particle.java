@@ -15,12 +15,12 @@ public final class Particle {
      */
     private XYPair position;
     
-    
+   
     /**
      * The speed encoded as an XY pair in map coordinates.  This 
      * encodes both magnitude and direction.
      */
-    private XYPair direction;
+    private PolarCoordinate speed;
     
     
     /**
@@ -42,11 +42,15 @@ public final class Particle {
         return position;
     }
 
-    public XYPair getDirection() {
-        return direction;
+    public PolarCoordinate getSpeed() {
+        return speed;
     }
 
-    public void setDirection(XYPair direction) {
-        this.direction = direction;
+    public void setPosition(XYPair position) {
+        this.position = position;
+    }
+
+    public void setSpeed(PolarCoordinate speed) {
+        this.speed = speed;
     }
 }

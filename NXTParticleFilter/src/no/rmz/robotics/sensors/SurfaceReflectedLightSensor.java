@@ -1,7 +1,7 @@
 
 package no.rmz.robotics.sensors;
 
-import no.rmz.robotics.particlefilter.XYPair;
+import no.rmz.robotics.particlefilter.PolarCoordinate;
 
 /**
  * Use the reflected light sensor to detect
@@ -18,7 +18,7 @@ public class SurfaceReflectedLightSensor implements Sensor, SensorModel {
     public SensorInput sense() {
         return new SensorInput(
                 (byte) 0,
-                new XYPair((byte)0, (byte)0));
+                new PolarCoordinate(0, 50)); // XXX Wild guesstimates
     }
     
     // XXX This is just a wild guesstimate.  For real number, use
