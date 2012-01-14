@@ -12,7 +12,7 @@ I'm working on the correctness now, and the next
 step is to apply thorough unit testing.  
 
 Unfortunately Lejos and Junit  don't play nice out of the box
-I had to create a second project, an ordinary
+so I had to create a second project, an ordinary
 java project in netbeans, that uses the lejos-project's
 build directory as a library.  Then I can just write tests
 and they will access the lejos classes, but run them using
