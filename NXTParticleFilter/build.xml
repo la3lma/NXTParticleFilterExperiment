@@ -22,7 +22,7 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-	
+
 	<condition property="d32Flag" value="-d32" else="-Dblank.dummy.arg=">
 		<and>
 			<os family="mac" />
@@ -47,7 +47,7 @@
     		<compilerarg value="" />
 		</javac>
 	</target>
-        
+
 	<target name="link" depends="compile" description="link the binary ">
 		<!-- Link the binary and create a signature file -->
 		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
@@ -66,7 +66,7 @@
 			<arg value="${full.main.class}" />
 		</java>
 	</target>
-	
+
 	<target name="debuglink" depends="compile" description="link the binary">
 		<!-- Link the binary and create a signature file -->
 		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
@@ -86,7 +86,7 @@
 			<arg value="${full.main.class}" />
 		</java>
 	</target>
-	
+
 	<target name="upload" depends="link" description="upload the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
@@ -95,7 +95,7 @@
 			<arg value="${binary}" />
 		</java>
 	</target>
-	
+
 	<target name="uploadandrun" depends="link" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
@@ -105,7 +105,7 @@
 			<arg file="${binary}" />
 		</java>
 	</target>
-	
+
 	<target name="debuguploadandrun" depends="debuglink" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
@@ -115,7 +115,7 @@
 			<arg file="${binary}" />
 		</java>
 	</target>
-	
+
 	<target name="console" depends="debuguploadandrun" description="run a console">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
@@ -126,7 +126,7 @@
 			<arg file="${debug}" />
 		</java>
 	</target>
-	
+
 	<target name="consoleviewer" depends="debuguploadandrun" description="run the GUI Console Viewer">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
@@ -137,7 +137,7 @@
 			<arg file="${debug}" />
 		</java>
 	</target>
-	
+
 	<target name="debugtool" description="run the debug tool">
 		  <input
 		    message="Exception class:"
@@ -163,11 +163,11 @@
 			<arg value="${pc}" />
 		</java>
 	</target>
-	
+
 	<!-- generate javadocs -->
 	<target name="docs" description="generate javadocs">
 		<delete dir="${docs}" />
-		
+
     	<mkdir dir="${docs}" />
 		<javadoc
 			destdir="${docs}"
@@ -181,7 +181,7 @@
 			<classpath refid="lejos.nxt" />
     		<arg value="-extdirs"/>
 			<arg value="-quiet"/>
-			
+
 			<packageset
 				dir="${src}"
 			/>
