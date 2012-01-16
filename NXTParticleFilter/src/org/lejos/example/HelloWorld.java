@@ -18,7 +18,8 @@ package org.lejos.example;
 import lejos.nxt.*;
 
 /**
- * Example leJOS Project with an ant build file
+ * Placeholder for the main class in the future
+ * navigation application.
  *
  */
 public class HelloWorld {

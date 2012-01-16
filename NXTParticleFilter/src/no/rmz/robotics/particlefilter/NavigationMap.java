@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package no.rmz.robotics.particlefilter.circlemap;
+package no.rmz.robotics.particlefilter;
 
 import no.rmz.robotics.particlefilter.Particle;
 import no.rmz.robotics.sensors.SensorInput;

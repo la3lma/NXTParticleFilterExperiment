@@ -1,21 +1,20 @@
 /**
- *  Copyright 2012 Bjørn Remseth
+ * Copyright 2012 Bjørn Remseth
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package no.rmz.robotics.particlefilter;
 
-import no.rmz.robotics.particlefilter.circlemap.NavigationMap;
 import no.rmz.robotics.sensors.SensorInput;
 import no.rmz.robotics.sensors.Sensor;
 import no.rmz.robotics.sensors.SensorModel;
@@ -23,62 +22,106 @@ import no.rmz.robotics.arrays.Arrays;
 import java.util.Random;
 
 /**
- * This class implements a particle filter localization estimation
- * algorithm.
+ * This class implements a particle filter localization estimation algorithm.
  *
- * It has two sets of particles, old and new, both implemented as arrays
- * of particle.  The basic flow of the algorithm is:
+ * It has two sets of particles, old and new, both implemented as arrays of
+ * particle. The basic flow of the algorithm is:
  *
- * Start with  a set of particles randomly spread out over the
- * area where we suspect the vehicle is located in.
+ * Start with a set of particles randomly spread out over the area where we
+ * suspect the vehicle is located in.
  *
- * Then, given the current sensor input, filter and resample, then
- * then add movement based on estimated speed (with Gaussian noise)
- * and repeat.
+ * Then, given the current sensor input, filter and resample, then then add
+ * movement based on estimated speed (with Gaussian noise) and repeat.
  *
  * XXX Refactor to niceness before continuing.
  *
  */
 public final class ParticleFilter {
 
-    private final static int NO_OF_PARTICLES = 50;
-    
+    /**
+     * The number of particles that should replace a single selected particle.
+     */
     private final int REPLACEMENT_FACTOR = 3;
     
-    private final int PARTICLE_SPEED_ERROR = 5;
-   
-    private final Sensor sensor;
-    private final SensorModel sensorModel;
-    private final ParticleFieldConsumer particleFieldConsumer;
+    /**
+     * A fudge factor that is used to add error to the speed estimates.
+     */
+    private final int PARTICLE_POSITION_ERROR = 5;
+    
+    
+    /**
+     * The number of particles in the particle pools. The actual number of
+     * particles managed by the filter is two times the noOfParticles, since we
+     * have an old and a new pool.
+     */
+    private final int noOfParticles;
+    /**
+     * A map that is used to calculate probable locations.
+     */
     private final NavigationMap navigationMap;
+    /**
+     * A sensor with possibly a multitude of measurements.
+     */
+    private final Sensor sensor;
+    /**
+     * A model that based on statistics will give the probability that a sensor
+     * input consistent with assumptions about consequences of a map model.
+     */
+    private final SensorModel sensorModel;
+    /**
+     * The object that will do something about the particle field once it has
+     * been calculated.
+     */
+    private final ParticleFieldConsumer particleFieldConsumer;
     
     
-    private Particle[] oldParticles = new Particle[NO_OF_PARTICLES];
-    private Particle[] newParticles = new Particle[NO_OF_PARTICLES];
-   
+    /**
+     * The old particle pool. The pool that is evaluated for probabilities
+     * of locations based on knowledge about maps and sensors' reactions to
+     * them.
+     */
+    private Particle[] oldParticles;
+    
+    /**
+     * The new particle pool.   The set of particles that is being built based
+     * on the old particle pool.
+     */
+    private Particle[] newParticles;
+    
+    /**
+     * As long as this variabler is true, the filter will continue
+     * to run.
+     */
     private boolean runStatus;
     
+    /**
+     * Randomness used to add noise to position estimates.
+     */
     final Random randomness = new Random();
 
     public ParticleFilter(
-            Sensor sensor, 
-            SensorModel sensorModel, 
-            ParticleFieldConsumer particleFieldConsumer,
-            NavigationMap navigationMap) {
+            final int noOfParticles,
+            final Sensor sensor,
+            final SensorModel sensorModel,
+            final ParticleFieldConsumer particleFieldConsumer,
+            final NavigationMap navigationMap) {
+        this.noOfParticles = noOfParticles;
         this.sensor = sensor;
         this.sensorModel = sensorModel;
         this.particleFieldConsumer = particleFieldConsumer;
         this.navigationMap = navigationMap;
+
+        oldParticles = new Particle[noOfParticles];
+        newParticles = new Particle[noOfParticles];
     }
-    
-    
+
     // XXX This algorithm has not bee tested!!!
     private Particle pickParticleAccordingToProbability() {
-      
+
         // Pick a random number in the interval [0, 1]
-        
+
         final double r = randomness.nextDouble();
-        
+
         // Then find the particle in the old-particle set tha
         // is currently assigned a "weight" that is equal or larger
         // than  r, but where the "weight" of the next entry in the
@@ -86,33 +129,32 @@ public final class ParticleFilter {
         // purposes of this algorithm we assume that the NO_OF_PARTICLES
         // entry has the weight 1. (XXX IS this an off by one error? It may
         // in fact be!)
-        
+
         int min = 0;
-        int max = NO_OF_PARTICLES  - 1;
-        
+        int max = noOfParticles - 1;
+
         while (min < max) {
             final int center = min + (max - min);
             final Particle centerp = oldParticles[center];
-            
-            if (centerp.getWeight() <= r)  {
+
+            if (centerp.getWeight() <= r) {
                 min = center;
             } else {
                 max = center;
             }
         }
-        
+
         // At this point max == min == the number we want.
-        
+
         return oldParticles[max];
     }
 
     /**
-     * This represents a simple kinematic model of the
-     * robot, and then applies movement as measured to the
-     * assumed starting point and puts the new particle
-     * (with speed and position) in the target particle.
-     * 
-     * @param target  The address of the new target particle
+     * This represents a simple kinematic model of the robot, and then applies
+     * movement as measured to the assumed starting point and puts the new
+     * particle (with speed and position) in the target particle.
+     *
+     * @param target The address of the new target particle
      * @param startingPoint The origi particle.
      * @param sensedSpeed Speed for the two wheels!
      */
@@ -120,19 +162,19 @@ public final class ParticleFilter {
             final int target,
             final Particle startingPoint,
             final PolarCoordinate sensedSpeed) {
-        
-        
+
+
         // Get copies of the speed and location from
         // respectively the sensor and the starting point.
-        final PolarCoordinate speed    = sensedSpeed.copy();
-        final XYPair          location = startingPoint.getPosition().copy();
-        
+        final PolarCoordinate speed = sensedSpeed.copy();
+        final XYPair location = startingPoint.getPosition().copy();
+
         // First perturb both the speed and the location,
         // then apply the movement to the location.  The time is
         // normalized to one, but that is something we need to look into.
         speed.perturb();
         location.perturb();
-        
+
         // The speed from the sensor is in a coordinate system relative
         // to the robot, but we need map speed and direction, hence
         // we need to convert the coordinates, and we do that
@@ -140,48 +182,33 @@ public final class ParticleFilter {
         // perturbing that wrt the vehicle-relative speed.
         speed.convertToMapSpeed(startingPoint.getSpeed());
         location.move(speed);
-        
+
         // Then finally set destination particle's speed
         // and location.
-        final Particle destination =  newParticles[target];
+        final Particle destination = newParticles[target];
         destination.setPosition(location);
         destination.setSpeed(speed);
     }
 
     private int getPositionError() {
-        return randomness.nextInt(PARTICLE_SPEED_ERROR) - (PARTICLE_SPEED_ERROR/2);
+        return randomness.nextInt(PARTICLE_POSITION_ERROR) - (PARTICLE_POSITION_ERROR / 2);
     }
-    
-    
     public final static ParticleComparatorAccordingToWeight particleCompratorAccordingToWeight =
             new ParticleComparatorAccordingToWeight();
-
-    /**
-     * Initialize the particles using a two dimensional Gaussian
-     * centered at x, y with a standard deviation of sdev.
-     * @param x
-     * @param y
-     * @param sdev
-     */
-    public void initialize(byte x, byte y, byte sdev) {
-        throw new RuntimeException("Not implemented");
-    }
 
     private boolean getRunStatus() {
         return runStatus;
     }
-    
-    
 
     public void mainLoop() {
         while (getRunStatus()) {
-            
-            
+
+
             // Switch old and new data
-            
+
             final Particle tmp[] = newParticles;
             newParticles = oldParticles;
-            oldParticles = tmp;     
+            oldParticles = tmp;
 
             ///
             /// Sensing phase
@@ -198,18 +225,18 @@ public final class ParticleFilter {
             double sumOfWeights = 0;
 
             // Calculate un-normalized weights.
-            for (int i = 0; i < NO_OF_PARTICLES; i++) {
+            for (int i = 0; i < noOfParticles; i++) {
                 final Particle p = oldParticles[i];
                 final double w =
                         sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
-                            navigationMap.getExpectedSensorValue(p),
-                            sensorInput);
+                        navigationMap.getExpectedSensorValue(p),
+                        sensorInput);
                 p.setWeight(w);
                 sumOfWeights += w;
             }
 
             // Normalize weights
-            for (int i = 0; i < NO_OF_PARTICLES; i++) {
+            for (int i = 0; i < noOfParticles; i++) {
                 final Particle p = oldParticles[i];
                 p.setWeight(p.getWeight() / sumOfWeights);
             }
@@ -220,32 +247,32 @@ public final class ParticleFilter {
 
             // Sort w.r.t. weights (hightest weights first)
             Arrays.sort(oldParticles, particleCompratorAccordingToWeight);
-            
+
             // Then set weights to be the cumulated weights lower than
             // itself including itself.  This will allow us to use binary
             // searh when doing resampling
-            
+
             double cumulatedWeights = 0;
-            for (int i = 0; i < NO_OF_PARTICLES; i++) {
+            for (int i = 0; i < noOfParticles; i++) {
                 cumulatedWeights += oldParticles[i].getWeight();
                 oldParticles[i].setWeight(cumulatedWeights);
             }
-           
+
             // Resample (with replacement)
             // with probabilities of being basis
             // for resampling being based on normalized weights
-            
+
             final PolarCoordinate speed = sensorInput.getSpeed();
-            for (int i = 0; i < NO_OF_PARTICLES; i++) {
+            for (int i = 0; i < noOfParticles; i++) {
                 final Particle startingPoint = pickParticleAccordingToProbability();
-                for (int j = 0; j < REPLACEMENT_FACTOR && i < NO_OF_PARTICLES; j++, i++) {
-                    estimateNewParticle(i, startingPoint,  speed);
+                for (int j = 0; j < REPLACEMENT_FACTOR && i < noOfParticles; j++, i++) {
+                    estimateNewParticle(i, startingPoint, speed);
                 }
             }
-            
+
             // At this point newData contains the best guess at the
             // present position
-            
+
             particleFieldConsumer.consume(newParticles);
         }
     }
