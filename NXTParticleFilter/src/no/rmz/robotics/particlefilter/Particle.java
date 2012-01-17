@@ -16,6 +16,8 @@
 
 package no.rmz.robotics.particlefilter;
 
+import no.rmz.robotics.arrays.Weighted;
+
 /**
  * A particle is an hypothesis of where the robot is located and what its
  * speed is.
@@ -24,7 +26,7 @@ package no.rmz.robotics.particlefilter;
  * algorithm to calculate the probability that this particular particle
  * represents the real location/speed of the robot.
  */
-public final class Particle {
+public final class Particle  implements Weighted {
     
     /**
      * The position encoded as an XY pair in map coordinates.
@@ -46,10 +48,12 @@ public final class Particle {
      */
     double weight;
 
+    @Override
     public void setWeight(final double w) {
         this.weight = w;
     }
 
+    @Override
     public double getWeight() {
         return weight;
     }
@@ -68,5 +72,5 @@ public final class Particle {
 
     public void setSpeed(PolarCoordinate speed) {
         this.speed = speed;
-    }
+    }   
 }
