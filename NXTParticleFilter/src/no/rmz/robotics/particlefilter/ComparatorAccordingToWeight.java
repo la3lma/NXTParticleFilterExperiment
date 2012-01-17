@@ -17,9 +17,10 @@
 package no.rmz.robotics.particlefilter;
 
 import no.rmz.robotics.arrays.Comparator;
+import no.rmz.robotics.arrays.Weighted;
 
 
-public final class ParticleComparatorAccordingToWeight implements Comparator<Particle> {
+public final class ComparatorAccordingToWeight implements Comparator<Weighted> {
 
     private int sign(final double x) {
         if (x < 0) {
@@ -30,10 +31,9 @@ public final class ParticleComparatorAccordingToWeight implements Comparator<Par
             return 1;
         }
     }
-
+  
     @Override
-    public int compare(final Particle t, final Particle t1) {
-        return sign(t.weight - t1.weight);
+    public int compare(final Weighted t, final Weighted t1) {
+        return sign(t.getWeight() - t1.getWeight());
     }
-    
 }

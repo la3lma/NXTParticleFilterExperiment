@@ -19,5 +19,5 @@ package no.rmz.robotics.particlefilter;
 
 public interface ParticleFieldConsumer {
 
-    void consumeParticles(final ParticlePool pool);
+    void consumeParticles(final WeightedPool pool);
 }

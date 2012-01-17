@@ -72,12 +72,12 @@ public final class ParticleFilter {
      * The old particle pool. The pool that is evaluated for probabilities of
      * locations based on knowledge about maps and sensors' reactions to them.
      */
-    private ParticlePool oldParticles;
+    private WeightedPool<Particle> oldParticles;
     /**
      * The new particle pool. The set of particles that is being built based on
      * the old particle pool.
      */
-    private ParticlePool newParticles;
+    private WeightedPool<Particle> newParticles;
     /**
      * As long as this variable is true, the filter will continue to run.
      */
@@ -96,8 +96,8 @@ public final class ParticleFilter {
         this.particleFieldConsumer = particleFieldConsumer;
         this.navigationMap = navigationMap;
 
-        oldParticles = new ParticlePool(noOfParticles);
-        newParticles = new ParticlePool(noOfParticles);
+        oldParticles = new WeightedPool<Particle>(new Particle[noOfParticles]);
+        newParticles = new WeightedPool<Particle>(new Particle[noOfParticles]);
     }
 
     /**
@@ -136,6 +136,7 @@ public final class ParticleFilter {
 
         // Then finally set destination particle's speed
         // and location.
+        
         final Particle destination = newParticles.get(target);
         destination.setPosition(location);
         destination.setSpeed(speed);
@@ -152,7 +153,7 @@ public final class ParticleFilter {
 
             // Switch old and new data
 
-            final ParticlePool tmp = newParticles;
+            final WeightedPool tmp = newParticles;
             newParticles = oldParticles;
             oldParticles = tmp;
 
@@ -180,12 +181,9 @@ public final class ParticleFilter {
                 p.setWeight(w);
                 sumOfWeights += w;
             }
+            
+            oldParticles.normalizeWeights(sumOfWeights);
 
-            // Normalize weights
-            for (int i = 0; i < noOfParticles; i++) {
-                final Particle p = oldParticles.get(i);
-                p.setWeight(p.getWeight() / sumOfWeights);
-            }
 
             ///
             /// Resampling phase
