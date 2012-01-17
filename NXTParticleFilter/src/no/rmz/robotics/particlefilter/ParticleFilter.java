@@ -15,6 +15,7 @@
  */
 package no.rmz.robotics.particlefilter;
 
+import no.rmz.robotics.arrays.WeightedPool;
 import no.rmz.robotics.sensors.SensorInput;
 import no.rmz.robotics.sensors.Sensor;
 import no.rmz.robotics.sensors.SensorModel;
@@ -198,7 +199,7 @@ public final class ParticleFilter {
 
             final PolarCoordinate speed = sensorInput.getSpeed();
             for (int i = 0; i < noOfParticles; i++) {
-                final Particle startingPoint = oldParticles.pickParticleAccordingToProbability();
+                final Particle startingPoint = oldParticles.pickInstanceAccordingToProbability();
                 for (int j = 0; j < REPLACEMENT_FACTOR && i < noOfParticles; j++, i++) {
                     estimateNewParticle(i, startingPoint, speed);
                 }

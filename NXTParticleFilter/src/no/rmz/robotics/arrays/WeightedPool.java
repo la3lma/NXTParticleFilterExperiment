@@ -13,11 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package no.rmz.robotics.particlefilter;
+package no.rmz.robotics.arrays;
 
 import java.util.Random;
-import no.rmz.robotics.arrays.Arrays;
-import no.rmz.robotics.arrays.Weighted;
+import no.rmz.robotics.particlefilter.ComparatorAccordingToWeight;
 
 /**
  * A pool that holds particles, and can do some things on them to make sure they
@@ -36,25 +35,58 @@ public class WeightedPool<T extends Weighted> {
      */
     public static final ComparatorAccordingToWeight PARTICLE_COMPARATOR_ACCORDING_TO_WEIGHT =
             new ComparatorAccordingToWeight();
+    
+    /**
+     * The objects we get in an array when creating an instance
+     * of WeightedPool.
+     */
     private final T[] objects;
+    
+    /**
+     * True iff the content is known to be sorted, which it only is
+     * after it has been sorted.
+     */
     private boolean isSorted = false;
 
+    /**
+     * Create a new instance.  The objects array may be of any size, but
+     * it is assumed not to be shared with anything else.  It is not
+     * created by the WeightedPool itself because I don't know how to
+     * make Java create a new generic array, on an NXT brick ;-)
+     * 
+     * @param objects 
+     */
     public WeightedPool(final T[] objects) {
         this.objects = objects;
     }
 
+    /**
+     * Mark the pool as unsorted.
+     */
     public void unsort() {
         synchronized (monitor) {
             isSorted = false;
         }
     }
 
+    
+    /**
+     * Get object with index 'i' in the internal ordering.
+     * @param i
+     * @return 
+     */
     public T get(final int i) {
         synchronized (monitor) {
             return objects[i];
         }
     }
 
+    /**
+     * Put an object at index 'i' in the internal ordering.
+     * 
+     * @param i
+     * @param p 
+     */
     public void put(final int i, final T p) {
         synchronized (monitor) {
             unsort();
@@ -79,7 +111,13 @@ public class WeightedPool<T extends Weighted> {
         }
     }
 
-    T pickParticleAccordingToProbability() {
+    /**
+     * Interpret the weights as cumulative probabilities, then
+     * pick an instance according to its (cumulative) probability
+     * weight.  (XXX that's a bit unclair, it should be less unclear :-)
+     * @return 
+     */
+    public T pickInstanceAccordingToProbability() {
         synchronized (monitor) {
             if (!isSorted) {
                 sortThenCumulateWeights();
@@ -96,14 +134,13 @@ public class WeightedPool<T extends Weighted> {
     }
 
     public void normalizeWeights(final double sumOfWeights) {
-        // Normalize weights
         for (int i = 0; i < objects.length; i++) {
             final Weighted p = objects[i];
             p.setWeight(p.getWeight() / sumOfWeights);
         }
     }
 
-    void sortThenCumulateWeights() {
+    public void sortThenCumulateWeights() {
         synchronized (monitor) {
             sortAccordingToWeight();
 

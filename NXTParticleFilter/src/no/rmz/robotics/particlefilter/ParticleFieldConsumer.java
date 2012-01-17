@@ -16,6 +16,8 @@
 
 package no.rmz.robotics.particlefilter;
 
+import no.rmz.robotics.arrays.WeightedPool;
+
 
 public interface ParticleFieldConsumer {
 

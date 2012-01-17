@@ -16,8 +16,6 @@
 
 package no.rmz.robotics.arrays;
 
-import no.rmz.robotics.particlefilter.Particle;
-
 /**
 
  * This is a helper class inspired by the Arrays helper
@@ -119,6 +117,4 @@ public final class Arrays {
 
         quicksort(values, comparator, 0, values.length - 1);
     }
-    
-  
 }

@@ -17,7 +17,6 @@ package no.rmz.robotics.arrays;
  */
 public interface  Weighted {
     
-    public void   setWeight(double w);
+    public void   setWeight(final double w);
     public double getWeight();
-    
 }
