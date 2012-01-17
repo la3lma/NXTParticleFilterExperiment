@@ -15,26 +15,23 @@
  */
 package no.rmz.robotic.arrays;
 
-import no.rmz.robotics.arrays.Comparator;
-import org.junit.*;
+import no.rmz.robotics.arrays.Weighted;
 
 
-public class ComparatorTester {
- 
-    public final static Comparator<Integer> INTEGER_COMPARATOR = new Comparator<Integer>() {
+public final class SimpleWeighted implements Weighted {
+    private double w;
 
-        @Override
-        public int compare(final Integer t, final Integer t1) {
-            return t.compareTo(t1);
-        }
-    };
-    
-    Integer i1 = 1;
-    Integer i2 = 2;
+    public SimpleWeighted(double w) {
+        this.w = w;
+    }
 
-    @Test
-    public void hello() {
-        org.junit.Assert.assertTrue("Expected comparison to return less than zero",
-                INTEGER_COMPARATOR.compare(i1, i2) < 0);
+    @Override
+    public void setWeight(double d) {
+        w = d;
+    }
+
+    @Override
+    public double getWeight() {
+        return w;
     }
 }

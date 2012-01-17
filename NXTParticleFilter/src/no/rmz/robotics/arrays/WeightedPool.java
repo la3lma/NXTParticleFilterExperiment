@@ -46,7 +46,7 @@ public class WeightedPool<T extends Weighted> {
      * True iff the content is known to be sorted, which it only is
      * after it has been sorted.
      */
-    private boolean isSorted = false;
+    private boolean sorted = false;
 
     /**
      * Create a new instance.  The objects array may be of any size, but
@@ -65,8 +65,23 @@ public class WeightedPool<T extends Weighted> {
      */
     public void unsort() {
         synchronized (monitor) {
-            isSorted = false;
+            sorted = false;
         }
+    }
+    
+    
+    /**
+     * Return true iff the pool is sorted.
+     * @return 
+     */
+    public boolean isSorted() {
+        synchronized (monitor) {
+        return sorted;
+        }
+    }
+    
+    public int getSize() {
+        return objects.length;
     }
 
     
@@ -82,7 +97,8 @@ public class WeightedPool<T extends Weighted> {
     }
 
     /**
-     * Put an object at index 'i' in the internal ordering.
+     * Put an object at index 'i' in the internal ordering.   Will
+     * mark the pool as unsorted.
      * 
      * @param i
      * @param p 
@@ -114,12 +130,12 @@ public class WeightedPool<T extends Weighted> {
     /**
      * Interpret the weights as cumulative probabilities, then
      * pick an instance according to its (cumulative) probability
-     * weight.  (XXX that's a bit unclair, it should be less unclear :-)
+     * weight.  (XXX that's a bit unclear, it should be less unclear :-)
      * @return 
      */
     public T pickInstanceAccordingToProbability() {
         synchronized (monitor) {
-            if (!isSorted) {
+            if (!sorted) {
                 sortThenCumulateWeights();
             }
 
@@ -150,7 +166,7 @@ public class WeightedPool<T extends Weighted> {
                 get(i).setWeight(cumulatedWeights);
             }
 
-            isSorted = true;
+            sorted = true;
         }
     }
 }
