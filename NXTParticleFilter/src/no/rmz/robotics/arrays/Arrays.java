@@ -26,7 +26,12 @@ package no.rmz.robotics.arrays;
  */
 public final class Arrays {
 
-    
+    /**
+     *  It should't be possible to instantiate this class.
+     */
+    private Arrays() {
+        
+    }
     
     /**
      * An impllementation of quicksort
@@ -47,7 +52,7 @@ public final class Arrays {
         int i = low, j = high;
         
         // Get the pivot element from the middle of the list
-        T pivot = values[low + (high - low) / 2];
+        final T pivot = values[low + (high - low) / 2];
 
         // Divide into two lists
         while (i <= j) {
