@@ -1,3 +1,3 @@
 #!/bin/sh
- (cd NXTParticleFilter/ && ant compile) && (cd NXTParticleFilter/ && ant test-report)
+ (cd NXTParticleFilter/ && ant compile) && (cd ParticleFilterTester/ && ant test-report)
 
