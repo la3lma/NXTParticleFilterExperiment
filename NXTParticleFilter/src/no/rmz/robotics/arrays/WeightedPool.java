@@ -72,11 +72,12 @@ public class WeightedPool<T extends Weighted> {
     
     /**
      * Return true iff the pool is sorted.
-     * @return 
+     *
+     * @return
      */
     public boolean isSorted() {
         synchronized (monitor) {
-        return sorted;
+            return sorted;
         }
     }
     
@@ -139,7 +140,6 @@ public class WeightedPool<T extends Weighted> {
                 sortThenCumulateWeights();
             }
 
-
             final double r = RANDOMNESS.nextDouble();
             return binarySearchForNumber(r);
         }
@@ -150,10 +150,24 @@ public class WeightedPool<T extends Weighted> {
     }
 
     public void normalizeWeights(final double sumOfWeights) {
+        if (sumOfWeights <=0 ) {
+            throw new IllegalArgumentException("Can't normalize with non-positive number: " + sumOfWeights);
+        }
         for (int i = 0; i < objects.length; i++) {
             final Weighted p = objects[i];
             p.setWeight(p.getWeight() / sumOfWeights);
         }
+    }
+    
+    public double getSumOfWeights() {
+        synchronized (monitor) {
+            
+            double sum = 0;
+            for (int i = 0; i < objects.length; i++) {
+                sum += get(i).getWeight();
+            }
+            return sum;
+        } 
     }
 
     public void sortThenCumulateWeights() {
@@ -165,7 +179,6 @@ public class WeightedPool<T extends Weighted> {
                 cumulatedWeights += get(i).getWeight();
                 get(i).setWeight(cumulatedWeights);
             }
-
             sorted = true;
         }
     }

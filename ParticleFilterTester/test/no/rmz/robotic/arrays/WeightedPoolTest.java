@@ -107,6 +107,13 @@ public class WeightedPoolTest {
     
     @Test
     public void testNormalizeWeights() {
+        for (final WeightedPool<SimpleWeighted> p : pools) {
+            final double sum = p.getSumOfWeights();
+            if (sum > 0) {
+                p.normalizeWeights(sum);
+                assertEquals(p.getSumOfWeights(), 1.0, 0.0000000001);
+            }
+        }
     }
 
     @Test
