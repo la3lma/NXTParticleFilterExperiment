@@ -16,7 +16,7 @@ package no.rmz.robotics.arrays;
  *  limitations under the License.
  */
 public interface  Weighted {
-    
+
     public void   setWeight(final double w);
     public double getWeight();
 }

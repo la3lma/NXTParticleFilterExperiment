@@ -16,7 +16,7 @@
 package no.rmz.robotics.particlefilter;
 
 public final class PolarCoordinate {
-    
+
     private double theta;
     private double radius;
 

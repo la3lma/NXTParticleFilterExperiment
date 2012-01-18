@@ -21,26 +21,26 @@ import no.rmz.robotics.arrays.Weighted;
 /**
  * A particle is an hypothesis of where the robot is located and what its
  * speed is.
- * 
+ *
  * There is also a "weight" field that is used by the particle filter
  * algorithm to calculate the probability that this particular particle
  * represents the real location/speed of the robot.
  */
 public final class Particle  implements Weighted {
-    
+
     /**
      * The position encoded as an XY pair in map coordinates.
      */
     private XYPair position;
-    
-   
+
+
     /**
-     * The speed encoded as an XY pair in map coordinates.  This 
+     * The speed encoded as an XY pair in map coordinates.  This
      * encodes both magnitude and direction.
      */
     private PolarCoordinate speed;
-    
-    
+
+
     /**
      * The weight of this particle.  The weight represents a probability
      * for this particle to be the correct one.   It is manipulated
@@ -72,5 +72,5 @@ public final class Particle  implements Weighted {
 
     public void setSpeed(PolarCoordinate speed) {
         this.speed = speed;
-    }   
+    }
 }

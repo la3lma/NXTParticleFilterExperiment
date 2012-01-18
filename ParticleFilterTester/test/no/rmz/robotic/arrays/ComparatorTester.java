@@ -20,7 +20,7 @@ import org.junit.*;
 
 
 public class ComparatorTester {
- 
+
     public final static Comparator<Integer> INTEGER_COMPARATOR = new Comparator<Integer>() {
 
         @Override
@@ -28,7 +28,7 @@ public class ComparatorTester {
             return t.compareTo(t1);
         }
     };
-    
+
     Integer i1 = 1;
     Integer i2 = 2;
 

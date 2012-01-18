@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 public class ArraysTester {
 
     private Random rnd = new Random();
-     
+
 
     @Test
     public void sortEmptyArray() {
@@ -40,7 +40,7 @@ public class ArraysTester {
         Arrays.sort(array, ComparatorTester.INTEGER_COMPARATOR);
         isSorted(array);
     }
-    
+
     @Test
     public void sortSortedArray() {
         final Integer[] array = new Integer[3];
@@ -60,8 +60,8 @@ public class ArraysTester {
         Arrays.sort(array, ComparatorTester.INTEGER_COMPARATOR);
         isSorted(array);
     }
-    
-    
+
+
     @Test
     public void sortWithDupes() {
         final Integer[] array = new Integer[3];
@@ -72,9 +72,9 @@ public class ArraysTester {
         isSorted(array);
     }
 
-    
-   
-    
+
+
+
     @Test
     public void testSemiBigRandomizedArray() {
         final int siz = 50;
@@ -90,7 +90,7 @@ public class ArraysTester {
      * If the array isn't sorted according to  ComparatorTester.INTEGER_COMPARATOR
      * in a (non-strictly) increasing order, the isSorted method will fail
      * the test that calls it.
-     * @param array 
+     * @param array
      */
     private void isSorted(final Integer[] array) {
         for (int i = 1 ; i < array.length - 1; i++) {

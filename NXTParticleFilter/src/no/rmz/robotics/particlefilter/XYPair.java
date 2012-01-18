@@ -39,10 +39,10 @@ public final class XYPair {
     public void setY(int y) {
         this.y = y;
     }
-    
+
     /**
      * The euclidian distance between this point and another.
-     * @param other 
+     * @param other
      * @param b
      * @return the euclidian distance between the points, as a double
      *         precision floating point number.

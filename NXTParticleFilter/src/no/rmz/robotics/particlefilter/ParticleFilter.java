@@ -84,7 +84,7 @@ public final class ParticleFilter {
      */
     private boolean runStatus;
 
-//   
+//
     public ParticleFilter(
             final int noOfParticles,
             final Sensor sensor,
@@ -137,13 +137,13 @@ public final class ParticleFilter {
 
         // Then finally set destination particle's speed
         // and location.
-        
+
         final Particle destination = newParticles.get(target);
         destination.setPosition(location);
         destination.setSpeed(speed);
     }
 
-    
+
     private boolean getRunStatus() {
         return runStatus;
     }
@@ -182,7 +182,7 @@ public final class ParticleFilter {
                 p.setWeight(w);
                 sumOfWeights += w;
             }
-            
+
             oldParticles.normalizeWeights(sumOfWeights);
 
 
@@ -190,7 +190,7 @@ public final class ParticleFilter {
             /// Resampling phase
             ///
 
-            
+
             oldParticles.sortThenCumulateWeights();
 
             // Resample (with replacement)

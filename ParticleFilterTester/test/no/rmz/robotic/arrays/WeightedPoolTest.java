@@ -30,7 +30,7 @@ public class WeightedPoolTest {
             new ArrayList<WeightedPool<SimpleWeighted>>();
     private final static double DELTA = 0.0000000001;
     private final static Random RND = new Random();
-    
+
     private void initializePool(final WeightedPool<SimpleWeighted> pool) {
         for (int i = 0; i < pool.getSize(); i++) {
             pool.put(i, new SimpleWeighted(i));
@@ -49,10 +49,10 @@ public class WeightedPoolTest {
             initializePool(p);
         }
 
-        WeightedPool<SimpleWeighted> rndpool = new WeightedPool<SimpleWeighted>("hundred  element randomized pool", 
+        WeightedPool<SimpleWeighted> rndpool = new WeightedPool<SimpleWeighted>("hundred  element randomized pool",
                 new SimpleWeighted[100]);
         pools.add(rndpool);
-        
+
         // Add a bunch of randomly distributed, possibly equal numbers.
         for (int i = 0 ; i < rndpool.getSize() ; i++) {
             rndpool.put(i, new SimpleWeighted(RND.nextDouble() * 10000));
@@ -111,7 +111,7 @@ public class WeightedPoolTest {
     @Test
     public void testSortThenCumulateWeights() {
 
-        // The three-element pool is the smallest 
+        // The three-element pool is the smallest
         // one we can use for doing a (meaningful, non-corner case)
         // statistical test, so
         // we start using it and then perhaps make the test more generic
@@ -119,12 +119,12 @@ public class WeightedPoolTest {
 
 
         for (final WeightedPool<SimpleWeighted> pool : pools) {
-            
+
             System.out.println("Randomized test over pool named '" + pool.getName() +"'");
             final int noOfSamplesPerEntry = 100000;
             final int noOfSamples = pool.getSize() * noOfSamplesPerEntry;
             final Double zero = 0.0;
-            
+
             final Map<SimpleWeighted, Double> counters =
                     new HashMap<SimpleWeighted, Double>();
 
@@ -141,7 +141,7 @@ public class WeightedPoolTest {
                 System.out.println("pool(" + i + ") = " + pool.get(i).getWeight());
             }
 
-            
+
 
             assertNotNull("Expect counters to be non-null", counters);
 

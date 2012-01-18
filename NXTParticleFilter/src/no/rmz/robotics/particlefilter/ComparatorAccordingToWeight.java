@@ -31,7 +31,7 @@ public final class ComparatorAccordingToWeight implements Comparator<Weighted> {
             return 1;
         }
     }
-  
+
     @Override
     public int compare(final Weighted t, final Weighted t1) {
         return sign(t.getWeight() - t1.getWeight());

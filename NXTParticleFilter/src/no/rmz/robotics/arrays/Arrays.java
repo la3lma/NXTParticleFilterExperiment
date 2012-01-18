@@ -19,9 +19,9 @@ package no.rmz.robotics.arrays;
 /**
 
  * This is a helper class inspired by the Arrays helper
- * class in java...  
- * 
- * It provides a sorting method for arrays.  It is currently 
+ * class in java...
+ *
+ * It provides a sorting method for arrays.  It is currently
  * implented using quicksort.
  */
 public final class Arrays {
@@ -30,9 +30,9 @@ public final class Arrays {
      *  It should't be possible to instantiate this class.
      */
     private Arrays() {
-        
+
     }
-    
+
     /**
      * An impllementation of quicksort
      * @param <T> The type of the values in the array that is being sorted
@@ -50,7 +50,7 @@ public final class Arrays {
             final int high) {
 
         int i = low, j = high;
-        
+
         // Get the pivot element from the middle of the list
         final T pivot = values[low + (high - low) / 2];
 
@@ -92,7 +92,7 @@ public final class Arrays {
      * @param <T> Type of the elements in the array
      * @param values The array where the exchange takes place
      * @param i
-     * @param j 
+     * @param j
      */
     private static <T> void exchange(final T[] values, final int i, final int j) {
         final T temp = values[i];
