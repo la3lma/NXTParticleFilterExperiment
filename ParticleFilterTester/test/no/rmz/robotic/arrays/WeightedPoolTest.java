@@ -43,6 +43,7 @@ public class WeightedPoolTest {
         pools.add(new WeightedPool<SimpleWeighted>("empty pool", new SimpleWeighted[0]));
         pools.add(new WeightedPool<SimpleWeighted>("one element pool", new SimpleWeighted[1]));
         pools.add(new WeightedPool<SimpleWeighted>("three element pool", new SimpleWeighted[3]));
+        pools.add(new WeightedPool<SimpleWeighted>("four element pool", new SimpleWeighted[4]));
         pools.add(new WeightedPool<SimpleWeighted>("five element pool", new SimpleWeighted[5]));
         pools.add(new WeightedPool<SimpleWeighted>("ten element pool", new SimpleWeighted[10]));
         for (final WeightedPool<SimpleWeighted> p : pools) {
