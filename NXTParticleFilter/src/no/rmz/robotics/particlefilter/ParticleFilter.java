@@ -97,8 +97,8 @@ public final class ParticleFilter {
         this.particleFieldConsumer = particleFieldConsumer;
         this.navigationMap = navigationMap;
 
-        oldParticles = new WeightedPool<Particle>(new Particle[noOfParticles]);
-        newParticles = new WeightedPool<Particle>(new Particle[noOfParticles]);
+        oldParticles = new WeightedPool<Particle>("a", new Particle[noOfParticles]);
+        newParticles = new WeightedPool<Particle>("b", new Particle[noOfParticles]);
     }
 
     /**

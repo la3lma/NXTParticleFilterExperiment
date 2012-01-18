@@ -27,6 +27,9 @@ public final class SimpleWeighted implements Weighted {
 
     @Override
     public void setWeight(double d) {
+        if (d < 0) {
+            throw new IllegalArgumentException("Negative numbers not allowed: " + d);
+        }
         w = d;
     }
 

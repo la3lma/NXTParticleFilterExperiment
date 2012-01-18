@@ -47,6 +47,11 @@ public class WeightedPool<T extends Weighted> {
      * after it has been sorted.
      */
     private boolean sorted = false;
+    
+    /**
+     * The name of the pool.
+     */
+    private final String name;
 
     /**
      * Create a new instance.  The objects array may be of any size, but
@@ -56,7 +61,8 @@ public class WeightedPool<T extends Weighted> {
      * 
      * @param objects 
      */
-    public WeightedPool(final T[] objects) {
+    public WeightedPool(final String name, final T[] objects) {
+        this.name = name;
         this.objects = objects;
     }
 
@@ -85,6 +91,10 @@ public class WeightedPool<T extends Weighted> {
         return objects.length;
     }
 
+    public String getName() {
+        return name;
+    }
+    
     
     /**
      * Get object with index 'i' in the internal ordering.
@@ -115,9 +125,12 @@ public class WeightedPool<T extends Weighted> {
         synchronized (monitor) {
             int min = 0;
             int max = objects.length - 1;
-            while (min < max) {
-                final int center = min + (max - min);
+            
+            while (min + 1  < max) {
+                
+                final int center = min + (max - min)/2;
                 final T centerp = get(center);
+            
                 if (centerp.getWeight() <= r) {
                     min = center;
                 } else {
