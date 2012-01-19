@@ -36,6 +36,13 @@ public class WeightedPoolTest {
 
     private WeightedPool<SimpleWeighted> fourElementPool;
 
+    /**
+     * If you want more verbose output, fix this method.
+     * @param s 
+     */
+    private final  void log(final String s) {
+        // System.out.println(s);
+    }
 
     private void initializePoolWithWeightsEqualToIndexes(final WeightedPool<SimpleWeighted> pool) {
         for (int i = 0; i < pool.getSize(); i++) {
@@ -45,7 +52,7 @@ public class WeightedPoolTest {
 
     private void printPool(final WeightedPool<SimpleWeighted> pool) {
         for (int i = 0; i < pool.getSize(); i++) {
-            System.out.println("pool(" + i + ") = " + pool.get(i).getWeight());
+           log("pool(" + i + ") = " + pool.get(i).getWeight());
         }
     }
 
@@ -110,19 +117,18 @@ public class WeightedPoolTest {
         }
     }
 
-    // XXX   Perhaps the picker is working the wrong direction (from
-    //       top to bottom instead of bottom to top).
+    
     @Test
     public void testBinarySearchForNumber() {
-        System.out.println("B: testBinarySearchForNumber");
+        log("B: testBinarySearchForNumber");
 
-        // XXX This is clumsy, it shouldn't have to be like this.
+        
         fourElementPool.normalizeWeights(fourElementPool.getSumOfWeights());
         fourElementPool.sortThenCumulateWeights();
 
         for (int i = 0; i < fourElementPool.getSize() ; i++) {
             final SimpleWeighted item = fourElementPool.get(i);
-            System.out.println("item " + i + " = " + item.getWeight());
+            log("item " + i + " = " + item.getWeight());
         }
 
         assertEquals(fourElementPool.get(1), fourElementPool.binarySearchForNumber(0.15));
@@ -131,7 +137,7 @@ public class WeightedPoolTest {
         assertEquals(fourElementPool.get(3), fourElementPool.binarySearchForNumber(0.66));
         assertEquals(fourElementPool.get(3), fourElementPool.binarySearchForNumber(1.0));
 
-        System.out.println("E: testBinarySearchForNumber");
+        log("E: testBinarySearchForNumber");
     }
 
     @Test
@@ -142,6 +148,8 @@ public class WeightedPoolTest {
     public void testUnsort() {
     }
 
+    
+    
 
     @Test
     public void testPickInstanceAccordingToProbability () {
@@ -155,7 +163,7 @@ public class WeightedPoolTest {
 
         for (final WeightedPool<SimpleWeighted> pool : pools) {
 
-            System.out.println("Randomized test over pool named '" + pool.getName() +"'");
+            log("Randomized test over pool named '" + pool.getName() +"'");
 
             final int noOfSamples = pool.getSize() * NO_OF_SAMPLES_PER_ITEM;
             final Double zero = 0.0;
@@ -204,9 +212,8 @@ public class WeightedPoolTest {
                 // Compare to weights, the normalized counts should be
                 // very similar to the weights of the key elements.
                 // If we're within 1% we're ok.
-                System.out.println("Expected = " + w.getWeight() + " normalized = " + normalizedSample);
+                log("Expected = " + probabilities.get(w) + " normalized = " + normalizedSample);
                 assertEquals(probabilities.get(w), normalizedSample, 0.01);
-                System.out.println("trallala " + w);
             }
         }
     }
