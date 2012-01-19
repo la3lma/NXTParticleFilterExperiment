@@ -140,6 +140,9 @@ public class WeightedPoolTest {
         log("E: testBinarySearchForNumber");
     }
 
+    
+    // XXX Should or shouldn't I add tests here?  It may in fact be
+    //     better to refactor and avoid the possibility/necessity of tests.
     @Test
     public void testSortThenCumulateWeights() {
     }
@@ -168,9 +171,10 @@ public class WeightedPoolTest {
             final int noOfSamples = pool.getSize() * NO_OF_SAMPLES_PER_ITEM;
             final Double zero = 0.0;
 
-            final Map<SimpleWeighted, Double> counters =
-                    new HashMap<SimpleWeighted, Double>();
             
+            
+            // The probabilities that a SimpleWeighted should be picked
+            // by the pickInstanceAccordingToProbability method.
             final Map<SimpleWeighted, Double> probabilities =
                     new HashMap<SimpleWeighted, Double>();
             
@@ -189,11 +193,13 @@ public class WeightedPoolTest {
             pool.sortThenCumulateWeights();
             printPool(pool);
 
+            
+            // Used to count how many times the various SimpleWeighted
+            // instances are picked by pickInstanceAccordingToProbability
+            final Map<SimpleWeighted, Double> counters =
+                    new HashMap<SimpleWeighted, Double>();
 
-
-            assertNotNull("Expect counters to be non-null", counters);
-
-            // Sample (with replacement)
+            // Sample (with replacement) and count.
             for (int i = 0; i < noOfSamples; i++) {
                 final SimpleWeighted pick =
                         pool.pickInstanceAccordingToProbability();
@@ -205,7 +211,7 @@ public class WeightedPoolTest {
             }
 
 
-            // Normalize and compare counts
+            // Normalize and compare counts with probabilities
             for (final SimpleWeighted w : counters.keySet()) {
                 final double normalizedSample = counters.get(w) / noOfSamples;
 
