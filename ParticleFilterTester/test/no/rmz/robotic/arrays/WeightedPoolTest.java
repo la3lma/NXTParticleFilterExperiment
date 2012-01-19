@@ -30,6 +30,7 @@ public class WeightedPoolTest {
             new ArrayList<WeightedPool<SimpleWeighted>>();
     private final static double DELTA = 0.0000000001;
     private final static Random RND = new Random();
+    private final static int RANGE_TO_SELECT_RANDOM_NUMBERS_FROM = 10000;
 
     private void initializePool(final WeightedPool<SimpleWeighted> pool) {
         for (int i = 0; i < pool.getSize(); i++) {
@@ -50,13 +51,15 @@ public class WeightedPoolTest {
             initializePool(p);
         }
 
-        WeightedPool<SimpleWeighted> rndpool = new WeightedPool<SimpleWeighted>("hundred  element randomized pool",
+        final WeightedPool<SimpleWeighted> rndpool =
+                new WeightedPool<SimpleWeighted>("hundred  element randomized pool",
                 new SimpleWeighted[100]);
         pools.add(rndpool);
 
         // Add a bunch of randomly distributed, possibly equal numbers.
         for (int i = 0 ; i < rndpool.getSize() ; i++) {
-            rndpool.put(i, new SimpleWeighted(RND.nextDouble() * 10000));
+            
+            rndpool.put(i, new SimpleWeighted(RND.nextDouble() * RANGE_TO_SELECT_RANDOM_NUMBERS_FROM));
         }
     }
 
@@ -102,7 +105,7 @@ public class WeightedPoolTest {
     }
 
     @Test
-    public void testPickInstanceAccordingToProbability() {
+    public void testSortThenCumulateWeights() {
     }
 
     @Test
@@ -110,7 +113,7 @@ public class WeightedPoolTest {
     }
 
     @Test
-    public void testSortThenCumulateWeights() {
+    public void testPickInstanceAccordingToProbability () {
 
         // The three-element pool is the smallest
         // one we can use for doing a (meaningful, non-corner case)
