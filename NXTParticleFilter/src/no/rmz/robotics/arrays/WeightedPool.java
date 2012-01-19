@@ -121,7 +121,7 @@ public class WeightedPool<T extends Weighted> {
         }
     }
 
-    T binarySearchForNumber(final double r) {
+    public T binarySearchForNumber(final double r) {
         synchronized (monitor) {
             int min = 0;
             int max = objects.length - 1;
