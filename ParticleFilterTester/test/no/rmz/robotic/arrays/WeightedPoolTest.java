@@ -190,9 +190,6 @@ public class WeightedPoolTest {
             }
             
 
-            pool.sortThenCumulateWeights();
-            printPool(pool);
-
             
             // Used to count how many times the various SimpleWeighted
             // instances are picked by pickInstanceAccordingToProbability
