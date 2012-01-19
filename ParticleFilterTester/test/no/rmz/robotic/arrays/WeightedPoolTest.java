@@ -28,10 +28,35 @@ public class WeightedPoolTest {
 
     private final Collection<WeightedPool<SimpleWeighted>> pools =
             new ArrayList<WeightedPool<SimpleWeighted>>();
+    
+    /**
+     * The delta allowed when comparing weights and sums of weights.
+     */
     private final static double DELTA = 0.0000000001;
+    
+    /**
+     * A source of randomness.
+     */
     private final static Random RND = new Random();
+    
+    
+    /**
+     * When creating random numbers to put in pools, they will
+     * be created in a range from zero up to and including this
+     * number.
+     */
     private final static int RANGE_TO_SELECT_RANDOM_NUMBERS_FROM = 10000;
+    
+    /**
+     * When sampling, this is the number of samples we will
+     * collect per item in a pool.
+     */
     private final static int NO_OF_SAMPLES_PER_ITEM = 100000;
+    
+    /**
+     * 1/100 == one percent
+     */
+    private final static double ONE_PERCENT = 0.01;
 
 
     private WeightedPool<SimpleWeighted> fourElementPool;
@@ -40,7 +65,7 @@ public class WeightedPoolTest {
      * If you want more verbose output, fix this method.
      * @param s 
      */
-    private final  void log(final String s) {
+    private void log(final String s) {
         // System.out.println(s);
     }
 
@@ -112,7 +137,7 @@ public class WeightedPoolTest {
             final double sum = p.getSumOfWeights();
             if (sum > 0) {
                 p.normalizeWeights(sum);
-                assertEquals(p.getSumOfWeights(), 1.0, DELTA);
+                assertEquals(1.0, p.getSumOfWeights(),  DELTA);
             }
         }
     }
@@ -170,8 +195,6 @@ public class WeightedPoolTest {
 
             final int noOfSamples = pool.getSize() * NO_OF_SAMPLES_PER_ITEM;
             final Double zero = 0.0;
-
-            
             
             // The probabilities that a SimpleWeighted should be picked
             // by the pickInstanceAccordingToProbability method.
@@ -189,8 +212,6 @@ public class WeightedPoolTest {
                 probabilities.put(pool.get(i), pool.get(i).getWeight());
             }
             
-
-            
             // Used to count how many times the various SimpleWeighted
             // instances are picked by pickInstanceAccordingToProbability
             final Map<SimpleWeighted, Double> counters =
@@ -207,16 +228,16 @@ public class WeightedPoolTest {
                 counters.put(pick, oldValue + 1);
             }
 
-
             // Normalize and compare counts with probabilities
             for (final SimpleWeighted w : counters.keySet()) {
-                final double normalizedSample = counters.get(w) / noOfSamples;
+                final double normalizedSampleProbability = 
+                        counters.get(w) / noOfSamples;
 
                 // Compare to weights, the normalized counts should be
                 // very similar to the weights of the key elements.
                 // If we're within 1% we're ok.
-                log("Expected = " + probabilities.get(w) + " normalized = " + normalizedSample);
-                assertEquals(probabilities.get(w), normalizedSample, 0.01);
+                log("Expected = " + probabilities.get(w) + " normalized = " + normalizedSampleProbability);
+                assertEquals(probabilities.get(w), normalizedSampleProbability, ONE_PERCENT);
             }
         }
     }
