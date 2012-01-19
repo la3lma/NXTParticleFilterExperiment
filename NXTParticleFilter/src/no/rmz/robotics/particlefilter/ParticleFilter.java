@@ -41,50 +41,59 @@ public final class ParticleFilter {
      * The number of particles that should replace a single selected particle.
      */
     private final int REPLACEMENT_FACTOR = 3;
+    
     /**
      * A fudge factor that is used to add error to the speed estimates.
      */
     private final int PARTICLE_POSITION_ERROR = 5;
+    
     /**
      * The number of particles in the particle pools. The actual number of
      * particles managed by the filter is two times the noOfParticles, since we
      * have an old and a new pool.
      */
     private final int noOfParticles;
+    
     /**
      * A map that is used to calculate probable locations.
      */
     private final NavigationMap navigationMap;
+    
     /**
      * A sensor with possibly a multitude of measurements.
      */
     private final Sensor sensor;
+    
     /**
      * A model that based on statistics will give the probability that a sensor
      * input consistent with assumptions about consequences of a map model.
      */
     private final SensorModel sensorModel;
+    
     /**
      * The object that will do something about the particle field once it has
      * been calculated.
      */
     private final ParticleFieldConsumer particleFieldConsumer;
+    
     /**
      * The old particle pool. The pool that is evaluated for probabilities of
      * locations based on knowledge about maps and sensors' reactions to them.
      */
     private WeightedPool<Particle> oldParticles;
+    
     /**
      * The new particle pool. The set of particles that is being built based on
      * the old particle pool.
      */
     private WeightedPool<Particle> newParticles;
+    
+    
     /**
      * As long as this variable is true, the filter will continue to run.
      */
     private boolean runStatus;
 
-//
     public ParticleFilter(
             final int noOfParticles,
             final Sensor sensor,
