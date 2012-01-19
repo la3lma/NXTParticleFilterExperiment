@@ -66,11 +66,11 @@ public final class Particle  implements Weighted {
         return speed;
     }
 
-    public void setPosition(XYPair position) {
+    public void setPosition(final XYPair position) {
         this.position = position;
     }
 
-    public void setSpeed(PolarCoordinate speed) {
+    public void setSpeed(final PolarCoordinate speed) {
         this.speed = speed;
     }
 }
