@@ -41,54 +41,44 @@ public final class ParticleFilter {
      * The number of particles that should replace a single selected particle.
      */
     private final int REPLACEMENT_FACTOR = 3;
-    
     /**
      * A fudge factor that is used to add error to the speed estimates.
      */
     private final int PARTICLE_POSITION_ERROR = 5;
-    
     /**
      * The number of particles in the particle pools. The actual number of
      * particles managed by the filter is two times the noOfParticles, since we
      * have an old and a new pool.
      */
     private final int noOfParticles;
-    
     /**
      * A map that is used to calculate probable locations.
      */
     private final NavigationMap navigationMap;
-    
     /**
      * A sensor with possibly a multitude of measurements.
      */
     private final Sensor sensor;
-    
     /**
      * A model that based on statistics will give the probability that a sensor
      * input consistent with assumptions about consequences of a map model.
      */
     private final SensorModel sensorModel;
-    
     /**
      * The object that will do something about the particle field once it has
      * been calculated.
      */
     private final ParticleFieldConsumer particleFieldConsumer;
-    
     /**
      * The old particle pool. The pool that is evaluated for probabilities of
      * locations based on knowledge about maps and sensors' reactions to them.
      */
     private WeightedPool<Particle> oldParticles;
-    
     /**
      * The new particle pool. The set of particles that is being built based on
      * the old particle pool.
      */
     private WeightedPool<Particle> newParticles;
-    
-    
     /**
      * As long as this variable is true, the filter will continue to run.
      */
@@ -119,11 +109,10 @@ public final class ParticleFilter {
      * @param startingPoint The origi particle.
      * @param sensedSpeed Speed for the two wheels!
      */
-    private void estimateNewParticle(
+    public void estimateNewParticle(
             final int target,
             final Particle startingPoint,
             final PolarCoordinate sensedSpeed) {
-
 
         // Get copies of the speed and location from
         // respectively the sensor and the starting point.
@@ -152,71 +141,77 @@ public final class ParticleFilter {
         destination.setSpeed(speed);
     }
 
-
     private boolean getRunStatus() {
         return runStatus;
     }
 
-    public void mainLoop() {
-        while (getRunStatus()) {
+    /**
+     * A single round of sense/estimate. It is factored out as a method to be
+     * easier to test, hence it is also public although there is no intrinsic
+     * reason for it to be public.
+     */
+    public void senseEstimate() {
+
+        // Switch old and new data
+
+        final WeightedPool tmp = newParticles;
+        newParticles = oldParticles;
+        oldParticles = tmp;
+
+        ///
+        /// Sensing phase
+        ///
+
+        final SensorInput sensorInput = sensor.sense();
 
 
-            // Switch old and new data
+        ///
+        /// Estimating posterior probabilities wrt sensor input
+        ///
 
-            final WeightedPool tmp = newParticles;
-            newParticles = oldParticles;
-            oldParticles = tmp;
+        // We'll use this to normalize later
+        double sumOfWeights = 0;
 
-            ///
-            /// Sensing phase
-            ///
-
-            final SensorInput sensorInput = sensor.sense();
-
-
-            ///
-            /// Estimating posterior probabilities wrt sensor input
-            ///
-
-            // We'll use this to normalize later
-            double sumOfWeights = 0;
-
-            // Calculate un-normalized weights.
-            for (int i = 0; i < noOfParticles; i++) {
-                final Particle p = oldParticles.get(i);
-                final double w =
-                        sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
+        // Calculate un-normalized weights.
+        for (int i = 0; i < noOfParticles; i++) {
+            final Particle p = oldParticles.get(i);
+            final double w =
+                    sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
                         navigationMap.getExpectedSensorValue(p),
                         sensorInput);
-                p.setWeight(w);
-                sumOfWeights += w;
+            p.setWeight(w);
+            sumOfWeights += w;
+        }
+
+        oldParticles.normalizeWeights(sumOfWeights);
+
+
+        ///
+        /// Resampling phase
+        ///
+
+
+        oldParticles.sortThenCumulateWeights();
+
+        // Resample (with replacement)
+        // with probabilities of being basis
+        // for resampling being based on normalized weights
+
+        final PolarCoordinate speed = sensorInput.getSpeed();
+        for (int i = 0; i < noOfParticles; i++) {
+            final Particle startingPoint = oldParticles.pickInstanceAccordingToProbability();
+            for (int j = 0; j < REPLACEMENT_FACTOR && i < noOfParticles; j++, i++) {
+                estimateNewParticle(i, startingPoint, speed);
             }
+        }
+    }
 
-            oldParticles.normalizeWeights(sumOfWeights);
-
-
-            ///
-            /// Resampling phase
-            ///
-
-
-            oldParticles.sortThenCumulateWeights();
-
-            // Resample (with replacement)
-            // with probabilities of being basis
-            // for resampling being based on normalized weights
-
-            final PolarCoordinate speed = sensorInput.getSpeed();
-            for (int i = 0; i < noOfParticles; i++) {
-                final Particle startingPoint = oldParticles.pickInstanceAccordingToProbability();
-                for (int j = 0; j < REPLACEMENT_FACTOR && i < noOfParticles; j++, i++) {
-                    estimateNewParticle(i, startingPoint, speed);
-                }
-            }
+    public void mainLoop() {
+        while (getRunStatus()) {
+            senseEstimate();
 
             // At this point newData contains the best guess at the
             // present position
-
             particleFieldConsumer.consumeParticles(newParticles);
         }
     }
