@@ -15,7 +15,7 @@
  */
 package no.rmz.robotics.sensors;
 
-import no.rmz.robotics.particlefilter.PolarCoordinate;
+import no.rmz.robotics.particlefilter.geometry.PolarCoordinate;
 
 /**
  * Use the reflected light sensor to detect

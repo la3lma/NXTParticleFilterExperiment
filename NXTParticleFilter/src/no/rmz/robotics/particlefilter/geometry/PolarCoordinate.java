@@ -13,53 +13,44 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package no.rmz.robotics.particlefilter;
+package no.rmz.robotics.particlefilter.geometry;
 
-public final class XYPair {
-    private int x;
-    private int y;
+public final class PolarCoordinate {
 
-    public XYPair(final int x, final int y) {
-        this.x = x;
-        this.y = y;
+    private double theta;
+    private double radius;
+
+    public PolarCoordinate(final double theta, final double radius) {
+        this.theta = theta;
+        this.radius = radius;
     }
 
-    public int getX() {
-        return x;
+    public double getRadius() {
+        return radius;
     }
 
-    public int getY() {
-        return y;
+    public double getTheta() {
+        return theta;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setTheta(double theta) {
+        this.theta = theta;
     }
 
-    /**
-     * The euclidian distance between this point and another.
-     * @param other
-     * @param b
-     * @return the euclidian distance between the points, as a double
-     *         precision floating point number.
-     */
-    public final int distanceSquared(final XYPair other) {
-        return ((int)x - (int)other.x)^2 + ((int)y - (int)other.y)^2;
-    }
-
-    XYPair copy() {
+    // XXX Change the coordinate a little bit
+    public void perturb() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    void perturb() {
+    public PolarCoordinate copy() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    void move(PolarCoordinate speed) {
+    public void convertToMapSpeed(PolarCoordinate speed) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

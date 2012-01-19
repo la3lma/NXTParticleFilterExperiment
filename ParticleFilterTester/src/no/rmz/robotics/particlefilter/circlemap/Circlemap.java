@@ -16,7 +16,7 @@
 
 package no.rmz.robotics.particlefilter.circlemap;
 
-import no.rmz.robotics.particlefilter.XYPair;
+import no.rmz.robotics.particlefilter.geometry.XYPair;
 
 
 /**

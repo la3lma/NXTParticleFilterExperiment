@@ -13,29 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package no.rmz.robotics.sensors;
 
-// I'm ad-hocking this for brightness right now, that may or may
+package no.rmz.robotic.particlefilter;
 
+import no.rmz.robotics.particlefilter.Particle;
+import no.rmz.robotics.particlefilter.PositionEstimation;
 import no.rmz.robotics.particlefilter.geometry.PolarCoordinate;
+import org.junit.*;
+import static org.junit.Assert.*;
 
-// not be a good idea for the future, but we'll see when we start
-// to include ultrasonics.
 
-public class SensorInput {
-    byte brightness;
-    PolarCoordinate speed;
+public class PositionEstimationTest {
+  
+    @Ignore  // This is the test we're working on now.
+    @Test
+    public void estimateNewParticleTest() {
+        final Particle destination = new Particle();
+        final Particle origin = new Particle();
+        final PolarCoordinate sensedSpeed = new PolarCoordinate(0, 0);
 
-    public SensorInput(final byte brightness, final PolarCoordinate speed) {
-        this.brightness = brightness;
-        this.speed = speed;
-    }   
-
-    public byte getBrightness() {
-        return brightness;
-    }
-    
-    public PolarCoordinate getSpeed(){
-        return speed;
+        PositionEstimation.estimateNewParticle(destination, origin, sensedSpeed);
     }
 }

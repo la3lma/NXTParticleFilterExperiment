@@ -16,6 +16,8 @@
 
 package no.rmz.robotics.particlefilter;
 
+import no.rmz.robotics.particlefilter.geometry.PolarCoordinate;
+import no.rmz.robotics.particlefilter.geometry.XYPair;
 import no.rmz.robotics.arrays.Weighted;
 
 /**

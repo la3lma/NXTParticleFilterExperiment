@@ -15,6 +15,8 @@
  */
 package no.rmz.robotics.particlefilter;
 
+import no.rmz.robotics.particlefilter.geometry.PolarCoordinate;
+
 import no.rmz.robotics.arrays.WeightedPool;
 import no.rmz.robotics.sensors.SensorInput;
 import no.rmz.robotics.sensors.Sensor;
@@ -100,46 +102,7 @@ public final class ParticleFilter {
         newParticles = new WeightedPool<Particle>("b", new Particle[noOfParticles]);
     }
 
-    /**
-     * This represents a simple kinematic model of the robot, and then applies
-     * movement as measured to the assumed starting point and puts the new
-     * particle (with speed and position) in the target particle.
-     *
-     * @param target The address of the new target particle
-     * @param startingPoint The origi particle.
-     * @param sensedSpeed Speed for the two wheels!
-     */
-    public void estimateNewParticle(
-            final int target,
-            final Particle startingPoint,
-            final PolarCoordinate sensedSpeed) {
-
-        // Get copies of the speed and location from
-        // respectively the sensor and the starting point.
-        final PolarCoordinate speed = sensedSpeed.copy();
-        final XYPair location = startingPoint.getPosition().copy();
-
-        // First perturb both the speed and the location,
-        // then apply the movement to the location.  The time is
-        // normalized to one, but that is something we need to look into.
-        speed.perturb();
-        location.perturb();
-
-        // The speed from the sensor is in a coordinate system relative
-        // to the robot, but we need map speed and direction, hence
-        // we need to convert the coordinates, and we do that
-        // using the previously known speed of the robot and then
-        // perturbing that wrt the vehicle-relative speed.
-        speed.convertToMapSpeed(startingPoint.getSpeed());
-        location.move(speed);
-
-        // Then finally set destination particle's speed
-        // and location.
-
-        final Particle destination = newParticles.get(target);
-        destination.setPosition(location);
-        destination.setSpeed(speed);
-    }
+    
 
     private boolean getRunStatus() {
         return runStatus;
@@ -172,9 +135,8 @@ public final class ParticleFilter {
         // We'll use this to normalize later
         double sumOfWeights = 0;
 
-        // Calculate un-normalized weights.
-        for (int i = 0; i < noOfParticles; i++) {
-            final Particle p = oldParticles.get(i);
+        
+        for (final Particle p: oldParticles.getParticles()) {
             final double w =
                     sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
                         navigationMap.getExpectedSensorValue(p),
@@ -201,7 +163,8 @@ public final class ParticleFilter {
         for (int i = 0; i < noOfParticles; i++) {
             final Particle startingPoint = oldParticles.pickInstanceAccordingToProbability();
             for (int j = 0; j < REPLACEMENT_FACTOR && i < noOfParticles; j++, i++) {
-                estimateNewParticle(i, startingPoint, speed);
+                final Particle destination = newParticles.get(j);
+                PositionEstimation.estimateNewParticle(destination, startingPoint, speed);
             }
         }
     }

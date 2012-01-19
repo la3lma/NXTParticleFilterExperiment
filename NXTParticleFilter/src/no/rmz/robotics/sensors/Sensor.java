@@ -15,7 +15,7 @@
  */
 package no.rmz.robotics.sensors;
 
-import no.rmz.robotics.particlefilter.XYPair;
+import no.rmz.robotics.particlefilter.geometry.XYPair;
 
 
 public interface Sensor {
