@@ -17,6 +17,7 @@ package no.rmz.robotics.arrays;
 
 import java.util.Random;
 import no.rmz.robotics.particlefilter.ComparatorAccordingToWeight;
+import no.rmz.robotics.particlefilter.Particle;
 
 /**
  * A pool that holds particles, and can do some things on them to make sure they
@@ -194,5 +195,9 @@ public class WeightedPool<T extends Weighted> {
             }
             sorted = true;
         }
+    }
+
+    public T[] getParticles() {
+        return objects;
     }
 }
