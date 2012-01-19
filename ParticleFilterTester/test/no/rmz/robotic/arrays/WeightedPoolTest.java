@@ -32,24 +32,24 @@ public class WeightedPoolTest {
     private final static Random RND = new Random();
     private final static int RANGE_TO_SELECT_RANDOM_NUMBERS_FROM = 10000;
     private final static int NO_OF_SAMPLES_PER_ITEM = 100000;
-    
-    
+
+
     private WeightedPool<SimpleWeighted> fourElementPool;
-            
+
 
     private void initializePoolWithWeightsEqualToIndexes(final WeightedPool<SimpleWeighted> pool) {
         for (int i = 0; i < pool.getSize(); i++) {
             pool.put(i, new SimpleWeighted(i));
         }
     }
-    
+
     private void printPool(final WeightedPool<SimpleWeighted> pool) {
         for (int i = 0; i < pool.getSize(); i++) {
             System.out.println("pool(" + i + ") = " + pool.get(i).getWeight());
         }
     }
-    
-    
+
+
 
     @Before
     public void setUp() {
@@ -60,7 +60,7 @@ public class WeightedPoolTest {
         pools.add(fourElementPool);
         pools.add(new WeightedPool<SimpleWeighted>("five element pool", new SimpleWeighted[5]));
         pools.add(new WeightedPool<SimpleWeighted>("ten element pool", new SimpleWeighted[10]));
-        
+
          for (final WeightedPool<SimpleWeighted> p : pools) {
             initializePoolWithWeightsEqualToIndexes(p);
         }
@@ -100,7 +100,7 @@ public class WeightedPoolTest {
 
     @Test
     public void testNormalizeWeights() {
-       
+
         for (final WeightedPool<SimpleWeighted> p : pools) {
             final double sum = p.getSumOfWeights();
             if (sum > 0) {
@@ -115,22 +115,22 @@ public class WeightedPoolTest {
     @Test
     public void testBinarySearchForNumber() {
         System.out.println("B: testBinarySearchForNumber");
-        
+
         // XXX This is clumsy, it shouldn't have to be like this.
         fourElementPool.normalizeWeights(fourElementPool.getSumOfWeights());
         fourElementPool.sortThenCumulateWeights();
-        
+
         for (int i = 0; i < fourElementPool.getSize() ; i++) {
             final SimpleWeighted item = fourElementPool.get(i);
             System.out.println("item " + i + " = " + item.getWeight());
         }
-        
+
         assertEquals(fourElementPool.get(1), fourElementPool.binarySearchForNumber(0.15));
         assertNotSame(fourElementPool.get(1),fourElementPool.get(2));
         assertEquals(fourElementPool.get(2), fourElementPool.binarySearchForNumber(0.19));
         assertEquals(fourElementPool.get(3), fourElementPool.binarySearchForNumber(0.66));
         assertEquals(fourElementPool.get(3), fourElementPool.binarySearchForNumber(1.0));
-        
+
         System.out.println("E: testBinarySearchForNumber");
     }
 
@@ -141,11 +141,8 @@ public class WeightedPoolTest {
     @Test
     public void testUnsort() {
     }
-    
-    
-    
-    @Ignore // Ignored since it's noisy and we're looking for trouble
-            // elsewhere right now.
+
+
     @Test
     public void testPickInstanceAccordingToProbability () {
 
@@ -159,21 +156,29 @@ public class WeightedPoolTest {
         for (final WeightedPool<SimpleWeighted> pool : pools) {
 
             System.out.println("Randomized test over pool named '" + pool.getName() +"'");
-           
+
             final int noOfSamples = pool.getSize() * NO_OF_SAMPLES_PER_ITEM;
             final Double zero = 0.0;
 
             final Map<SimpleWeighted, Double> counters =
                     new HashMap<SimpleWeighted, Double>();
-
-
-            pool.sortThenCumulateWeights();
-            final double sumOfWeights = pool.getSumOfWeights();
-            if (sumOfWeights < DELTA) {
+            
+            final Map<SimpleWeighted, Double> probabilities =
+                    new HashMap<SimpleWeighted, Double>();
+            
+             final double sumOfWeights = pool.getSumOfWeights();
+             
+             if (sumOfWeights < DELTA) {
                 continue;
             }
-            pool.normalizeWeights(sumOfWeights); // XXX Why is this even necessary?
+             
+            pool.normalizeWeights(sumOfWeights);
+            for (int i = 0 ; i < pool.getSize() ; i++) {
+                probabilities.put(pool.get(i), pool.get(i).getWeight());
+            }
+            
 
+            pool.sortThenCumulateWeights();
             printPool(pool);
 
 
@@ -200,7 +205,8 @@ public class WeightedPoolTest {
                 // very similar to the weights of the key elements.
                 // If we're within 1% we're ok.
                 System.out.println("Expected = " + w.getWeight() + " normalized = " + normalizedSample);
-                assertEquals(w.getWeight(), normalizedSample, 0.01);
+                assertEquals(probabilities.get(w), normalizedSample, 0.01);
+                System.out.println("trallala " + w);
             }
         }
     }
