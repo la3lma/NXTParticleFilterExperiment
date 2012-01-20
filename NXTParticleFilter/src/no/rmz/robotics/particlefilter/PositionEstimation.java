@@ -35,6 +35,7 @@ public class PositionEstimation {
             final Particle startingPoint,
             final PolarCoordinate sensedSpeed) {
 
+        // XXX This method  is perhaps not necessary, it's so small.
      
         startingPoint.copyTo(destination);
         applyMovement(destination.getPosition(), destination.getSpeed(), sensedSpeed);
@@ -44,10 +45,22 @@ public class PositionEstimation {
     
     
    
+    /**
+     * Apply the applicationSpeed 
+     * @param position
+     * @param speed
+     * @param applicationSpeed 
+     */
     public static void applyMovement(
             final XYPair position,
             final PolarCoordinate speed,
-            final PolarCoordinate sensedSpeed) {
-        throw new UnsupportedOperationException("Not yet implemented");
+            final PolarCoordinate applicationSpeed) {
+        
+        // First modify the speed to map coordinate speed
+        speed.setTheta(speed.getTheta() + applicationSpeed.getTheta());
+        speed.setRadius(applicationSpeed.getRadius());
+        
+        // Then apply that movement
+        position.move(speed);
     }
 }
