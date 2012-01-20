@@ -75,4 +75,12 @@ public final class Particle  implements Weighted {
     public void setSpeed(final PolarCoordinate speed) {
         this.speed = speed;
     }
+
+    // Copy everything, except weight, which is set to 
+    // zero
+    void copyTo(final Particle destination) {
+        destination.weight = 0;
+        position.copyTo(destination.getPosition());
+        speed.copyTo(destination.getSpeed());
+    }
 }

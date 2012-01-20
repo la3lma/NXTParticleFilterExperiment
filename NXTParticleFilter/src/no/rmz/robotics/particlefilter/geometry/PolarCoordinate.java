@@ -41,16 +41,14 @@ public final class PolarCoordinate {
         this.theta = theta;
     }
 
-    // XXX Change the coordinate a little bit
-    public void perturb() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public PolarCoordinate copy() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
     public void convertToMapSpeed(PolarCoordinate speed) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
+    public void copyTo(PolarCoordinate destination) {
+        destination.radius = radius;
+        destination.theta  = theta;
+    }
+
+   
 }

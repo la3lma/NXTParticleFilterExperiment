@@ -26,7 +26,7 @@ public class PositionEstimation {
      * 
      * A sight error is added to both the speed and the location
      *
-     * @param target The address of the new target particle
+     * @param destination The address of the new target particle
      * @param startingPoint The origi particle.
      * @param sensedSpeed Speed for the two wheels!
      */
@@ -35,29 +35,19 @@ public class PositionEstimation {
             final Particle startingPoint,
             final PolarCoordinate sensedSpeed) {
 
-        // Get copies of the speed and location from
-        // respectively the sensor and the starting point.
-        final PolarCoordinate speed = sensedSpeed.copy();
-        final XYPair location = startingPoint.getPosition().copy();
-
-        // First perturb both the speed and the location,
-        // then apply the movement to the location.  The time is
-        // normalized to one, but that is something we need to look into.
-        speed.perturb();
-        location.perturb();
-
-        // The speed from the sensor is in a coordinate system relative
-        // to the robot, but we need map speed and direction, hence
-        // we need to convert the coordinates, and we do that
-        // using the previously known speed of the robot and then
-        // perturbing that wrt the vehicle-relative speed.
-        speed.convertToMapSpeed(startingPoint.getSpeed());
-        location.move(speed);
-
-        // Then finally set destination particle's speed
-        // and location.
-
-        destination.setPosition(location);
-        destination.setSpeed(speed);
+     
+        startingPoint.copyTo(destination);
+        applyMovement(destination.getPosition(), destination.getSpeed(), sensedSpeed);
+        
+        // XXX Perturbations are not added yet
+    }
+    
+    
+   
+    public static void applyMovement(
+            final XYPair position,
+            final PolarCoordinate speed,
+            final PolarCoordinate sensedSpeed) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

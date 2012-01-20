@@ -15,6 +15,8 @@
  */
 package no.rmz.robotics.particlefilter.geometry;
 
+import no.rmz.robotics.particlefilter.Particle;
+
 public final class XYPair {
     private int x;
     private int y;
@@ -61,5 +63,10 @@ public final class XYPair {
 
     public void move(PolarCoordinate speed) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void copyTo(final XYPair destination) {
+        destination.x = x;
+        destination.y = y;
     }
 }
