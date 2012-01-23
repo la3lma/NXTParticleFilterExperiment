@@ -50,6 +50,19 @@ public final class Particle  implements Weighted {
      */
     double weight;
 
+    public Particle(final XYPair position, final PolarCoordinate speed, final double weight) {
+        this.position = position;
+        this.speed = speed;
+        this.weight = weight;
+    }
+
+    public Particle() {
+        this(new XYPair(0, 0), new PolarCoordinate(0.0, 0.0), 0.0);
+    }
+    
+    
+    
+
     @Override
     public void setWeight(final double w) {
         this.weight = w;

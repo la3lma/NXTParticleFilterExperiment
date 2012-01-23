@@ -24,8 +24,10 @@ import static org.junit.Assert.*;
 
 
 public class PositionEstimationTest {
+    
+    private final static double DELTA = 0.000001;
   
-    @Ignore  // This is the test we're working on now.
+   
     @Test
     public void estimateNewParticleTest() {
         final Particle destination = new Particle();
@@ -33,5 +35,8 @@ public class PositionEstimationTest {
         final PolarCoordinate sensedSpeed = new PolarCoordinate(0, 0);
 
         PositionEstimation.estimateNewParticle(destination, origin, sensedSpeed);
+        final double distance = destination.getPosition().distanceSquared(origin.getPosition());
+        
+        assertEquals("With no speed, expect no movement", 0, distance, DELTA);
     }
 }

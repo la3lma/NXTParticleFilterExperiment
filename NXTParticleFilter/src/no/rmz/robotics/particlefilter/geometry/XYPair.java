@@ -15,31 +15,34 @@
  */
 package no.rmz.robotics.particlefilter.geometry;
 
-import no.rmz.robotics.particlefilter.Particle;
-
 public final class XYPair {
-    private int x;
-    private int y;
+    private  double x;
+    private  double y;
 
-    public XYPair(final int x, final int y) {
+    public XYPair(final double x, final double y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
+    }
+    
+    
+    private static double square(final double s) {
+        return s * s;
     }
 
     /**
@@ -49,20 +52,16 @@ public final class XYPair {
      * @return the euclidian distance between the points, as a double
      *         precision floating point number.
      */
-    public final int distanceSquared(final XYPair other) {
-        return ((int)x - (int)other.x)^2 + ((int)y - (int)other.y)^2;
+    public final double distanceSquared(final XYPair other) {
+        return square(x - other.x) + square(y - other.y);
     }
 
-    public XYPair copy() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+  
 
-    public void perturb() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public void move(PolarCoordinate speed) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    // Rename to "add?"
+    public void move(final PolarCoordinate speed) {
+       setX(speed.getXcoord() + getX());
+       setY(speed.getYcoord() + getY());
     }
 
     public void copyTo(final XYPair destination) {

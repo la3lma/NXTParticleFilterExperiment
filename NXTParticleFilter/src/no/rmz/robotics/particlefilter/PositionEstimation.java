@@ -35,10 +35,12 @@ public class PositionEstimation {
             final Particle startingPoint,
             final PolarCoordinate sensedSpeed) {
 
-        // XXX This method  is perhaps not necessary, it's so small.
-     
+        
         startingPoint.copyTo(destination);
-        applyMovement(destination.getPosition(), destination.getSpeed(), sensedSpeed);
+        applyMovement(
+                destination.getPosition(), 
+                destination.getSpeed(),
+                sensedSpeed);
         
         // XXX Perturbations are not added yet
     }
@@ -56,7 +58,7 @@ public class PositionEstimation {
             final PolarCoordinate speed,
             final PolarCoordinate applicationSpeed) {
         
-        // First modify the speed to map coordinate speed
+        // First modify the vehicle relative speed to map coordinate speed
         speed.setTheta(speed.getTheta() + applicationSpeed.getTheta());
         speed.setRadius(applicationSpeed.getRadius());
         

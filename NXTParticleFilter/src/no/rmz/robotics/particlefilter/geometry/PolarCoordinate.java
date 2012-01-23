@@ -50,5 +50,11 @@ public final class PolarCoordinate {
         destination.theta  = theta;
     }
 
-   
+    public double getXcoord() {
+        return radius * Math.cos(theta);
+    }
+    
+      public double getYcoord() {
+         return radius * Math.sin(theta);
+    }
 }
