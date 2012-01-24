@@ -55,4 +55,35 @@ public class PositionEstimationTest {
         assertEquals("X coordinate should be zero", 0, destination.getPosition().getX(),  DELTA);
         assertEquals("Y coordinate should be one",  1, destination.getPosition().getY(),  DELTA);
     }
+    
+    
+    @Test
+    public void oneUnitSouthTest() {
+        final Particle destination = new Particle();
+        final Particle origin = new Particle();
+        final PolarCoordinate sensedSpeed = new PolarCoordinate(Math.PI * 3 / 2, 1);
+
+        PositionEstimation.estimateNewParticle(destination, origin, sensedSpeed);
+        final double distance = destination.getPosition().distanceSquared(origin.getPosition());
+        
+        assertEquals("With no speed, expect no movement", 1, distance, DELTA);
+        
+        assertEquals("X coordinate should be zero",  0, destination.getPosition().getX(),  DELTA);
+        assertEquals("Y coordinate should be one",  -1, destination.getPosition().getY(),  DELTA);
+    }
+    
+    @Test
+    public void oneUnitWestTest() {
+        final Particle destination = new Particle();
+        final Particle origin = new Particle();
+        final PolarCoordinate sensedSpeed = new PolarCoordinate(Math.PI , 1);
+
+        PositionEstimation.estimateNewParticle(destination, origin, sensedSpeed);
+        final double distance = destination.getPosition().distanceSquared(origin.getPosition());
+        
+        assertEquals("With no speed, expect no movement", 1, distance, DELTA);
+        
+        assertEquals("X coordinate should be zero",-1, destination.getPosition().getX(),  DELTA);
+        assertEquals("Y coordinate should be one",  0, destination.getPosition().getY(),  DELTA);
+    }
 }
