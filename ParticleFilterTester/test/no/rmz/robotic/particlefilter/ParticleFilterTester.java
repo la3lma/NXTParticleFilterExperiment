@@ -17,14 +17,20 @@
 package no.rmz.robotic.particlefilter;
 
 
+import no.rmz.robotics.arrays.WeightedPool;
 import no.rmz.robotics.particlefilter.NavigationMap;
+import no.rmz.robotics.particlefilter.Particle;
 import no.rmz.robotics.particlefilter.ParticleFieldConsumer;
 import no.rmz.robotics.particlefilter.ParticleFilter;
+import no.rmz.robotics.particlefilter.geometry.PolarCoordinate;
 import no.rmz.robotics.sensors.Sensor;
+import no.rmz.robotics.sensors.SensorInput;
 import no.rmz.robotics.sensors.SensorModel;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
+import static org.mockito.Mockito.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -36,6 +42,7 @@ public class ParticleFilterTester {
     private final static int NO_OF_PARTICLES = 5;
 
     private ParticleFilter pf;
+    private SensorInput    si;
 
     @Mock
     private Sensor sensor;
@@ -57,11 +64,35 @@ public class ParticleFilterTester {
                 sensorModel,
                 particleFieldConsumer,
                 navigationMap);
+        si = new SensorInput((byte)125, new PolarCoordinate(0, 1.0));
+        when(sensor.sense()).thenReturn(si);
     }
+    
+    
+    @Test
+    public void testSanityOfFilter(){
+        final WeightedPool<Particle> newParticles = pf.getNewParticles();
+        final WeightedPool<Particle> oldParticles = pf.getOldParticles();
+        
+        sanityCheckPool("newParticles", newParticles);
+        sanityCheckPool("oldParticles", oldParticles);      
+        
+    }
+    
 
     @Test
-    public void trallala() {
+    public void singleRoundOfSenseEstimate() {
+        pf.senseEstimate();
+    }
 
+    private void sanityCheckPool(final String poolName, final WeightedPool<Particle> pool) {
+       assertNotNull("poolName can't be null", poolName);
+       assertNotNull("pool " + poolName + " can't be null", pool);
+       
+       assertTrue("size of pool can't be zero", pool.getSize() > 0);
+       final Particle[] particles = pool.getParticles();
+       assertTrue("size of particles array can't be zero", particles.length > 0);
+       assertNotNull("First element in particles array can't be null", particles[0]);
     }
 
 }

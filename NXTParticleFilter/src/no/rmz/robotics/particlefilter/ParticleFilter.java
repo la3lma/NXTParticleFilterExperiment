@@ -98,11 +98,31 @@ public final class ParticleFilter {
         this.particleFieldConsumer = particleFieldConsumer;
         this.navigationMap = navigationMap;
 
+        if (noOfParticles < 1) {
+            throw new IllegalArgumentException("noOfParticles must be positive");
+        }
+
+        if (sensor == null) {
+            throw new IllegalArgumentException("Sensor can't be null");
+        }
+
+        if (sensorModel == null) {
+            throw new IllegalArgumentException("sensorModel can't be null");
+        }
+
+        if (particleFieldConsumer == null) {
+            throw new IllegalArgumentException("particleFieldConsumer can't be null");
+        }
+
+        if (navigationMap == null) {
+            throw new IllegalArgumentException("Navigation map can't be null");
+        }
+
         oldParticles = new WeightedPool<Particle>("a", new Particle[noOfParticles]);
         newParticles = new WeightedPool<Particle>("b", new Particle[noOfParticles]);
     }
 
-    
+
 
     private boolean getRunStatus() {
         return runStatus;
@@ -124,7 +144,9 @@ public final class ParticleFilter {
         ///
         /// Sensing phase
         ///
-
+        if (sensor == null) {
+            throw new RuntimeException("Sensor is null");
+        }
         final SensorInput sensorInput = sensor.sense();
 
 
@@ -135,14 +157,33 @@ public final class ParticleFilter {
         // We'll use this to normalize later
         double sumOfWeights = 0;
 
-        
+        if (oldParticles == null) {
+            throw new RuntimeException("oldParticles is null");
+        }
+
+        if (sensorModel == null) {
+            throw new RuntimeException("sensorModel is null");
+        }
+
+        if (navigationMap == null) {
+            throw new RuntimeException("navigationMap is null");
+        }
+
         for (final Particle p: oldParticles.getParticles()) {
             final double w =
                     sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
                         navigationMap.getExpectedSensorValue(p),
                         sensorInput);
+
+            if (p == null) {
+                throw new RuntimeException("p is null");
+            }
             p.setWeight(w);
             sumOfWeights += w;
+        }
+
+        if (oldParticles == null) {
+            throw new RuntimeException("oldParticles is null");
         }
 
         oldParticles.normalizeWeights(sumOfWeights);
@@ -159,11 +200,18 @@ public final class ParticleFilter {
         // with probabilities of being basis
         // for resampling being based on normalized weights
 
+         if (sensorInput == null) {
+            throw new RuntimeException("sensorInput is null");
+        }
+
         final PolarCoordinate speed = sensorInput.getSpeed();
         for (int i = 0; i < noOfParticles; i++) {
             final Particle startingPoint = oldParticles.pickInstanceAccordingToProbability();
             for (int j = 0; j < REPLACEMENT_FACTOR && i < noOfParticles; j++, i++) {
                 final Particle destination = newParticles.get(j);
+                if (destination == null) {
+                    throw new RuntimeException("destination is null");
+                }
                 PositionEstimation.estimateNewParticle(destination, startingPoint, speed);
             }
         }
@@ -178,4 +226,14 @@ public final class ParticleFilter {
             particleFieldConsumer.consumeParticles(newParticles);
         }
     }
+
+    public WeightedPool<Particle> getNewParticles() {
+        return newParticles;
+    }
+
+    public WeightedPool<Particle> getOldParticles() {
+        return oldParticles;
+    }
+
+   
 }
