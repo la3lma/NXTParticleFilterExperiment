@@ -19,9 +19,8 @@ package no.rmz.robotic.particlefilter;
 import no.rmz.robotics.particlefilter.Particle;
 import no.rmz.robotics.particlefilter.PositionEstimation;
 import no.rmz.robotics.particlefilter.geometry.PolarCoordinate;
-import no.rmz.robotics.particlefilter.geometry.XYPair;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 
 public final class PositionEstimationTest {
@@ -155,7 +154,7 @@ public final class PositionEstimationTest {
 
         // Then set the sensed speed, relative to the
         // vehicle speed to be  west magnitude 1.
-        final PolarCoordinate sensedSpeed = new PolarCoordinate(Math.PI/2 , 1);
+        final PolarCoordinate sensedSpeed = new PolarCoordinate(Math.PI / 2 , 1);
 
         // and estimate the new position, which should be (0,1), since
         // (0,1) = (1,1) + (-1, 0)
@@ -168,8 +167,5 @@ public final class PositionEstimationTest {
         // and check that they are where the are suposed to be.
         assertEquals("X coordinate had unexpected value",  0.0, destination.getPosition().getX(),  DELTA);
         assertEquals("Y coordinate had unexpected value",  1.0, destination.getPosition().getY(),  DELTA);
-    }
-
-    public PositionEstimationTest() {
     }
 }
