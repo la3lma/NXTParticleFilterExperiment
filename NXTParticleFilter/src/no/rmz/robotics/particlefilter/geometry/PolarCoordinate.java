@@ -15,6 +15,8 @@
  */
 package no.rmz.robotics.particlefilter.geometry;
 
+import no.rmz.robotics.particlefilter.Particle;
+
 public final class PolarCoordinate {
 
     private double theta;

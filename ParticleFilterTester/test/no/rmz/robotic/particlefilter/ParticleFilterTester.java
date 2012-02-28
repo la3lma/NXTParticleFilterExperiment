@@ -22,18 +22,18 @@ import no.rmz.robotics.particlefilter.ParticleFieldConsumer;
 import no.rmz.robotics.particlefilter.ParticleFilter;
 import no.rmz.robotics.sensors.Sensor;
 import no.rmz.robotics.sensors.SensorModel;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnit44Runner;
 
 // XXX Use mockito tester which probably isn't this.
 @RunWith(MockitoJUnit44Runner.class)
 public class ParticleFilterTester {
     
-    private final static int NO_OF_PARTICLES = 5;
-    
+    private final static int NO_OF_PARTICLES = 5;    
     
     private ParticleFilter pf;
     
@@ -51,10 +51,6 @@ public class ParticleFilterTester {
     
     @Before
     public void setUp() {
-        // MockitoAnnotations.initMocks(this);
-        
-     
-        
         pf = new ParticleFilter(
                 NO_OF_PARTICLES,
                 sensor,
@@ -67,6 +63,5 @@ public class ParticleFilterTester {
     public void trallala() {
         
     }
-    
   
 }

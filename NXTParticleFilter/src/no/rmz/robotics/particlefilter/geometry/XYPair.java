@@ -68,4 +68,11 @@ public final class XYPair {
         destination.x = x;
         destination.y = y;
     }
+
+    public void copyToPolar(final PolarCoordinate p) {
+        final double r = Math.sqrt(x*x + y*y);
+        final double theta = Math.atan(x/y);
+        p.setRadius(r);
+        p.setTheta(theta);
+    }
 }
