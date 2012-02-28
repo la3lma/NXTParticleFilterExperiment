@@ -27,28 +27,28 @@ import org.junit.Test;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnit44Runner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 // XXX Use mockito tester which probably isn't this.
-@RunWith(MockitoJUnit44Runner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ParticleFilterTester {
-    
-    private final static int NO_OF_PARTICLES = 5;    
-    
+
+    private final static int NO_OF_PARTICLES = 5;
+
     private ParticleFilter pf;
-    
+
     @Mock
     private Sensor sensor;
-    
+
     @Mock
     private SensorModel sensorModel;
-    
+
     @Mock
     private ParticleFieldConsumer particleFieldConsumer;
-    
+
     @Mock
     private NavigationMap navigationMap;
-    
+
     @Before
     public void setUp() {
         pf = new ParticleFilter(
@@ -58,10 +58,10 @@ public class ParticleFilterTester {
                 particleFieldConsumer,
                 navigationMap);
     }
-    
+
     @Test
     public void trallala() {
-        
+
     }
-  
+
 }
