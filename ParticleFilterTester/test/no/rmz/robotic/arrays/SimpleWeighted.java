@@ -21,12 +21,15 @@ import no.rmz.robotics.arrays.Weighted;
 public final class SimpleWeighted implements Weighted {
     private double w;
 
-    public SimpleWeighted(double w) {
+    public SimpleWeighted(final double w) {
+         if (w < 0) {
+            throw new IllegalArgumentException("Negative numbers not allowed: " + w);
+        }
         this.w = w;
     }
 
     @Override
-    public void setWeight(double d) {
+    public void setWeight(final double d) {
         if (d < 0) {
             throw new IllegalArgumentException("Negative numbers not allowed: " + d);
         }

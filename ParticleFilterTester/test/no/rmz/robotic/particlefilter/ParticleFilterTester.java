@@ -67,18 +67,18 @@ public class ParticleFilterTester {
         si = new SensorInput((byte)125, new PolarCoordinate(0, 1.0));
         when(sensor.sense()).thenReturn(si);
     }
-    
-    
+
+
     @Test
     public void testSanityOfFilter(){
         final WeightedPool<Particle> newParticles = pf.getNewParticles();
         final WeightedPool<Particle> oldParticles = pf.getOldParticles();
-        
+
         sanityCheckPool("newParticles", newParticles);
-        sanityCheckPool("oldParticles", oldParticles);      
-        
+        sanityCheckPool("oldParticles", oldParticles);
+
     }
-    
+
 
     @Test
     public void singleRoundOfSenseEstimate() {
@@ -88,7 +88,7 @@ public class ParticleFilterTester {
     private void sanityCheckPool(final String poolName, final WeightedPool<Particle> pool) {
        assertNotNull("poolName can't be null", poolName);
        assertNotNull("pool " + poolName + " can't be null", pool);
-       
+
        assertTrue("size of pool can't be zero", pool.getSize() > 0);
        final Particle[] particles = pool.getParticles();
        assertTrue("size of particles array can't be zero", particles.length > 0);

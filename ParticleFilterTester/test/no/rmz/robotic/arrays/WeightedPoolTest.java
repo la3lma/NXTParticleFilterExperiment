@@ -28,31 +28,31 @@ public class WeightedPoolTest {
 
     private final Collection<WeightedPool<SimpleWeighted>> pools =
             new ArrayList<WeightedPool<SimpleWeighted>>();
-    
+
     /**
      * The delta allowed when comparing weights and sums of weights.
      */
     private final static double DELTA = 0.0000000001;
-    
+
     /**
      * A source of randomness.
      */
     private final static Random RND = new Random();
-    
-    
+
+
     /**
      * When creating random numbers to put in pools, they will
      * be created in a range from zero up to and including this
      * number.
      */
     private final static int RANGE_TO_SELECT_RANDOM_NUMBERS_FROM = 10000;
-    
+
     /**
      * When sampling, this is the number of samples we will
      * collect per item in a pool.
      */
     private final static int NO_OF_SAMPLES_PER_ITEM = 100000;
-    
+
     /**
      * 1/100 == one percent
      */
@@ -63,15 +63,17 @@ public class WeightedPoolTest {
 
     /**
      * If you want more verbose output, fix this method.
-     * @param s 
+     * @param s
      */
     private void log(final String s) {
         // System.out.println(s);
     }
 
     private void initializePoolWithWeightsEqualToIndexes(final WeightedPool<SimpleWeighted> pool) {
-        for (int i = 0; i < pool.getSize(); i++) {
-            pool.put(i, new SimpleWeighted(i));
+        assertTrue("Expected pool size greater than zero", pool.getSize() > 0);
+        pool.put(0, new SimpleWeighted(DELTA / 1000 ));
+        for (int i = 1; i < pool.getSize(); i++) {
+            pool.put(i, new SimpleWeighted(i ));
         }
     }
 
@@ -85,7 +87,6 @@ public class WeightedPoolTest {
 
     @Before
     public void setUp() {
-        pools.add(new WeightedPool<SimpleWeighted>("empty pool", new SimpleWeighted[0]));
         pools.add(new WeightedPool<SimpleWeighted>("one element pool", new SimpleWeighted[1]));
         pools.add(new WeightedPool<SimpleWeighted>("three element pool", new SimpleWeighted[3]));
         fourElementPool = new WeightedPool<SimpleWeighted>("four element pool", new SimpleWeighted[4]);
@@ -142,16 +143,16 @@ public class WeightedPoolTest {
         }
     }
 
-    
+
     @Test
     public void testBinarySearchForNumber() {
         log("B: testBinarySearchForNumber");
 
-        
+
         fourElementPool.normalizeWeights(fourElementPool.getSumOfWeights());
         fourElementPool.sortThenCumulateWeights();
 
-        for (int i = 0; i < fourElementPool.getSize() ; i++) {
+        for (int i = 0; i < fourElementPool.getSize(); i++) {
             final SimpleWeighted item = fourElementPool.get(i);
             log("item " + i + " = " + item.getWeight());
         }
@@ -165,7 +166,7 @@ public class WeightedPoolTest {
         log("E: testBinarySearchForNumber");
     }
 
-    
+
     // XXX Should or shouldn't I add tests here?  It may in fact be
     //     better to refactor and avoid the possibility/necessity of tests.
     @Test
@@ -176,11 +177,11 @@ public class WeightedPoolTest {
     public void testUnsort() {
     }
 
-    
-    
+
+
 
     @Test
-    public void testPickInstanceAccordingToProbability () {
+    public void testPickInstanceAccordingToProbability() {
 
         // The three-element pool is the smallest
         // one we can use for doing a (meaningful, non-corner case)
@@ -195,23 +196,23 @@ public class WeightedPoolTest {
 
             final int noOfSamples = pool.getSize() * NO_OF_SAMPLES_PER_ITEM;
             final Double zero = 0.0;
-            
+
             // The probabilities that a SimpleWeighted should be picked
             // by the pickInstanceAccordingToProbability method.
             final Map<SimpleWeighted, Double> probabilities =
                     new HashMap<SimpleWeighted, Double>();
-            
+
              final double sumOfWeights = pool.getSumOfWeights();
-             
+
              if (sumOfWeights < DELTA) {
                 continue;
             }
-             
+
             pool.normalizeWeights(sumOfWeights);
             for (int i = 0 ; i < pool.getSize() ; i++) {
                 probabilities.put(pool.get(i), pool.get(i).getWeight());
             }
-            
+
             // Used to count how many times the various SimpleWeighted
             // instances are picked by pickInstanceAccordingToProbability
             final Map<SimpleWeighted, Double> counters =
@@ -230,7 +231,7 @@ public class WeightedPoolTest {
 
             // Normalize and compare counts with probabilities
             for (final SimpleWeighted w : counters.keySet()) {
-                final double normalizedSampleProbability = 
+                final double normalizedSampleProbability =
                         counters.get(w) / noOfSamples;
 
                 // Compare to weights, the normalized counts should be

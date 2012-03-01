@@ -17,13 +17,12 @@ package no.rmz.robotics.arrays;
 
 import java.util.Random;
 import no.rmz.robotics.particlefilter.ComparatorAccordingToWeight;
-import no.rmz.robotics.particlefilter.Particle;
 
 /**
  * A pool that holds particles, and can do some things on them to make sure they
  * are sorted and easy to search, etc.
  */
-public class WeightedPool<T extends Weighted> {
+public final  class WeightedPool<T extends Weighted> {
 
     private final Object monitor = new Object();
     /**
@@ -62,7 +61,9 @@ public class WeightedPool<T extends Weighted> {
      *
      * @param objects
      */
-    public WeightedPool(final String name, final T[] objects) {
+    public WeightedPool(
+            final String name,
+            final T[]    objects) {
         this.name = name;
         this.objects = objects;
     }
@@ -100,7 +101,7 @@ public class WeightedPool<T extends Weighted> {
     /**
      * Get object with index 'i' in the internal ordering.
      * @param i
-     * @return
+     * @return the ith element in the internal ordering
      */
     public T get(final int i) {
         synchronized (monitor) {
@@ -164,12 +165,16 @@ public class WeightedPool<T extends Weighted> {
     }
 
     public void normalizeWeights(final double sumOfWeights) {
-        if (sumOfWeights <=0 ) {
+        if (sumOfWeights <= 0 ) {
             throw new IllegalArgumentException("Can't normalize with non-positive number: " + sumOfWeights);
         }
         for (int i = 0; i < objects.length; i++) {
             final Weighted p = objects[i];
-            p.setWeight(p.getWeight() / sumOfWeights);
+            final double w = p.getWeight();
+            if (w <= 0.0) {
+                throw new IllegalStateException("Non-positive non-normalized weight detected " + w);
+            }
+            p.setWeight(w / sumOfWeights);
         }
     }
 
@@ -179,6 +184,10 @@ public class WeightedPool<T extends Weighted> {
             double sum = 0;
             for (int i = 0; i < objects.length; i++) {
                 sum += get(i).getWeight();
+            }
+            
+            if (sum <= 0) {
+                throw new IllegalStateException("non-positive sum of weights detected");
             }
             return sum;
         }
@@ -190,7 +199,11 @@ public class WeightedPool<T extends Weighted> {
 
             double cumulatedWeights = 0;
             for (int i = 0; i < objects.length; i++) {
-                cumulatedWeights += get(i).getWeight();
+                double w = get(i).getWeight();
+                if (w <= 0) {
+                    throw new IllegalStateException("Non-positive weight " + w + " detected at index" + i);
+                }
+                cumulatedWeights += w;
                 get(i).setWeight(cumulatedWeights);
             }
             sorted = true;
@@ -200,4 +213,6 @@ public class WeightedPool<T extends Weighted> {
     public T[] getParticles() {
         return objects;
     }
+
+
 }

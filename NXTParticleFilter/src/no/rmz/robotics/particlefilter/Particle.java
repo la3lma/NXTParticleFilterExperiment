@@ -54,10 +54,16 @@ public final class Particle  implements Weighted {
         this.position = position;
         this.speed = speed;
         this.weight = weight;
+
+        if (weight <= 0.0) {
+            throw new IllegalArgumentException("Weight must be positive, but was: " + weight);
+        }
     }
 
+    
+    @Deprecated
     public Particle() {
-        this(new XYPair(0, 0), new PolarCoordinate(0.0, 0.0), 0.0);
+        this(new XYPair(0, 0), new PolarCoordinate(0.0, 0.0), 0.1);
     }
     
     
@@ -65,6 +71,9 @@ public final class Particle  implements Weighted {
 
     @Override
     public void setWeight(final double w) {
+        if (w <= 0.0) {
+            throw new IllegalArgumentException("Attempt to set weight that wasn't positive, was: " +w);
+        }
         this.weight = w;
     }
 

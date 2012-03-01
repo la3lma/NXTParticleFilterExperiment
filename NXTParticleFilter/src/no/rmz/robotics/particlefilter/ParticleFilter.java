@@ -18,6 +18,7 @@ package no.rmz.robotics.particlefilter;
 import no.rmz.robotics.particlefilter.geometry.PolarCoordinate;
 
 import no.rmz.robotics.arrays.WeightedPool;
+import no.rmz.robotics.particlefilter.geometry.XYPair;
 import no.rmz.robotics.sensors.SensorInput;
 import no.rmz.robotics.sensors.Sensor;
 import no.rmz.robotics.sensors.SensorModel;
@@ -38,6 +39,8 @@ import no.rmz.robotics.sensors.SensorModel;
  *
  */
 public final class ParticleFilter {
+    
+    private final static double EPSILON = 0.00000000000001;
 
     /**
      * The number of particles that should replace a single selected particle.
@@ -85,6 +88,7 @@ public final class ParticleFilter {
      * As long as this variable is true, the filter will continue to run.
      */
     private boolean runStatus;
+    
 
     public ParticleFilter(
             final int noOfParticles,
@@ -118,11 +122,35 @@ public final class ParticleFilter {
             throw new IllegalArgumentException("Navigation map can't be null");
         }
 
-        oldParticles = new WeightedPool<Particle>("a", new Particle[noOfParticles]);
-        newParticles = new WeightedPool<Particle>("b", new Particle[noOfParticles]);
+
+        oldParticles = newPool("a", noOfParticles);
+        newParticles = newPool("b", noOfParticles);
+
     }
 
+    private static WeightedPool<Particle> newPool(
+            final String name,
+            final int noOfParticles) {
 
+        // The weight must be some positive number, but it doesn't
+        // matter which.
+        final double initial_weight = 0.3;
+        final Particle[] np = new Particle[noOfParticles];
+
+        for (int i = 0; i < np.length; i++) {
+            final Particle p =
+                    new Particle(
+                      new XYPair(0.0, 0.0),
+                      new PolarCoordinate(0.0, 0.0),
+                      initial_weight);
+            if (p.getWeight() <= 0) {
+                throw new IllegalStateException("Particle weight of new p can't be non-positive");
+            }
+            np[i] = p;
+            
+        }
+        return new WeightedPool<Particle>(name, np);
+    }
 
     private boolean getRunStatus() {
         return runStatus;
@@ -169,14 +197,20 @@ public final class ParticleFilter {
             throw new RuntimeException("navigationMap is null");
         }
 
-        for (final Particle p: oldParticles.getParticles()) {
-            final double w =
+        for (final Particle p : oldParticles.getParticles()) {
+            
+            // XXX Use a method to add the epsilon of zero is
+            //     detected!
+            double w =
                     sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
-                        navigationMap.getExpectedSensorValue(p),
-                        sensorInput);
+                    navigationMap.getExpectedSensorValue(p),
+                    sensorInput);
 
             if (p == null) {
                 throw new RuntimeException("p is null");
+            }
+            if (w == 0) {
+                w = EPSILON;  // Zeros are not legal!
             }
             p.setWeight(w);
             sumOfWeights += w;
@@ -184,6 +218,10 @@ public final class ParticleFilter {
 
         if (oldParticles == null) {
             throw new RuntimeException("oldParticles is null");
+        }
+
+        if (sumOfWeights == 0) {
+            throw new IllegalStateException("Sum of weights is zero");
         }
 
         oldParticles.normalizeWeights(sumOfWeights);
@@ -200,7 +238,7 @@ public final class ParticleFilter {
         // with probabilities of being basis
         // for resampling being based on normalized weights
 
-         if (sensorInput == null) {
+        if (sensorInput == null) {
             throw new RuntimeException("sensorInput is null");
         }
 
@@ -234,6 +272,4 @@ public final class ParticleFilter {
     public WeightedPool<Particle> getOldParticles() {
         return oldParticles;
     }
-
-   
 }
