@@ -39,7 +39,7 @@ import no.rmz.robotics.sensors.SensorModel;
  *
  */
 public final class ParticleFilter {
-    
+
     private final static double EPSILON = 0.00000000000001;
 
     /**
@@ -88,7 +88,7 @@ public final class ParticleFilter {
      * As long as this variable is true, the filter will continue to run.
      */
     private boolean runStatus;
-    
+
 
     public ParticleFilter(
             final int noOfParticles,
@@ -147,13 +147,21 @@ public final class ParticleFilter {
                 throw new IllegalStateException("Particle weight of new p can't be non-positive");
             }
             np[i] = p;
-            
+
         }
         return new WeightedPool<Particle>(name, np);
     }
 
     private boolean getRunStatus() {
         return runStatus;
+    }
+
+    private final double smoothed(final double w) {
+        if (w == 0) {
+            return EPSILON;
+        } else {
+            return w;
+        }
     }
 
     /**
@@ -198,20 +206,18 @@ public final class ParticleFilter {
         }
 
         for (final Particle p : oldParticles.getParticles()) {
-            
-            // XXX Use a method to add the epsilon of zero is
-            //     detected!
-            double w =
-                    sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
-                    navigationMap.getExpectedSensorValue(p),
-                    sensorInput);
+
+
+            final double w =
+                    smoothed(
+                       sensorModel.probabilityOfMeasuredResultGivenExpectedValue(
+                       navigationMap.getExpectedSensorValue(p),
+                       sensorInput));
 
             if (p == null) {
                 throw new RuntimeException("p is null");
             }
-            if (w == 0) {
-                w = EPSILON;  // Zeros are not legal!
-            }
+
             p.setWeight(w);
             sumOfWeights += w;
         }
